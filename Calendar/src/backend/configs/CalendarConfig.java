@@ -18,15 +18,13 @@ import net.md_5.bungee.api.ChatColor;
 
 public class CalendarConfig extends Config implements ConfigUtils {
 	
-	main instance = main.instance;
-	
 	FileConfiguration config;
 	
 	
 	public CalendarConfig(){
-		super();
+		super(main.instance.getDataFolder(), "CalendarConfig.yml");
 		
-		config = super.loadConfig(instance.getDataFolder(), "CalendarConfig.yml");
+		config = super.loadConfig();
 	}
 	
 	/*
@@ -105,8 +103,8 @@ public class CalendarConfig extends Config implements ConfigUtils {
 		return item;
 	}
 	
-	public void reloadConfig() {
-		config = super.reloadConfig(config, main.instance.getDataFolder(), "CalendarConfig.yml");
+	public FileConfiguration reloadConfig() {
+		return config = super.reloadConfig();
 	}
 
 	/*

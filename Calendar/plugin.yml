@@ -1,4 +1,4 @@
-name: TheTime
+name: Calendar
 main: backend.main.main
 version: 1.0
 author: Joshua Wirtz

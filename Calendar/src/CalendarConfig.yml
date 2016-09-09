@@ -44,6 +44,8 @@ items:
     material: STAINED_GLASS_PANE
     id: 0
     amount: '%day%'
+    lore:
+    - '%dayName%'
   week:
     toggle: true
     name: '&3Week %week%'

@@ -11,20 +11,24 @@ import backend.main.main;
 
 public class Config {
 	
-	protected Config() {
+	File file;
+	FileConfiguration config;
+	
+	protected Config(File parentFile, String configName) {
+		file = new File(parentFile, configName);
 	}
 	
 	/*
 	 * Loads and, if the YML File not exists calls createConfig(), the YML
 	 * configuration File. Declares the YML configuration variable 'config'
 	 */
-	protected FileConfiguration loadConfig(File parentFile, String configName) {
+	protected FileConfiguration loadConfig() {
 		
 		/*
 		 * Creates a new FileConfiguration Object 'config' with the createConfig() method.
 		 * 'Config' will be our configuration Object to work with.
 		 */
-		FileConfiguration config = createConfig(parentFile, configName);
+		config = createConfig();
 		
 		/*
 		 * Sets some options of the FileConfiguration 'config'.
@@ -32,7 +36,7 @@ public class Config {
 		config.options().copyHeader(true);
 		config.options().copyDefaults(true);
 		
-		saveConfig(config, new File(parentFile, configName));
+		saveConfig();
 		
 		return config;
 	}
@@ -41,13 +45,13 @@ public class Config {
 	/*
 	 * Saves the configuration of the current 'config' variable.
 	 */
-	protected void saveConfig(FileConfiguration config, File configFile) {
+	protected void saveConfig() {
 		
 		/*
 		 * Tries to save the configuration in the given file 'configFile'.
 		 */
 		try {
-			config.save(configFile);
+			config.save(file);
 		} catch (IOException exeption) {
 			exeption.printStackTrace();
 		}
@@ -57,12 +61,12 @@ public class Config {
 	/*
 	 * Saves the configuration and loads it again.
 	 */
-	protected FileConfiguration reloadConfig(FileConfiguration config, File configFile, String configName) {
+	protected FileConfiguration reloadConfig() {
 		
 		/*
 		 * Declares a new configuration to the existing FileConfiguartion 'config'.
 		 */
-		config = loadConfig(configFile, configName);
+		config = loadConfig();
 		
 		return config;
 	}
@@ -71,19 +75,14 @@ public class Config {
 	/*
 	 * Deletes the current configuration File.
 	 */
-	protected void delteConfig(File parentFile, String configName) {
-		
-		/*
-		 * Declares a File to the given path 'configPath'.
-		 */
-		File configFile = new File(parentFile, configName);
+	protected void delteConfig() {
 		
 		/*
 		 * Checks if the File exists.
 		 * If so, deletes the File.
 		 */
-		if(configFile.exists()){
-			configFile.delete();
+		if(file.exists()){
+			file.delete();
 		}
 	}
 
@@ -91,20 +90,15 @@ public class Config {
 	/*
 	 * Creates a new configuration File, if no File with the same path exists.
 	 */
-	protected FileConfiguration createConfig(File parentFile, String configName) {
-		
-		/*
-		 * Creates the new File.
-		 */
-		File configFile = new File(parentFile, configName);
+	protected FileConfiguration createConfig() {
 		
 		/*
 		 * Checks if the File exists.
 		 * If not, creates the File and all parent Folders.
 		 */
-		if(!configFile.exists()){
-			configFile.getParentFile().mkdirs();
-			main.instance.saveResource(configName, false);
+		if(!file.exists()){
+			file.getParentFile().mkdirs();
+			main.instance.saveResource(file.getName(), false);
 		}
 		
 		/*
@@ -117,11 +111,11 @@ public class Config {
 			 */
 			try {
 				
-				config.load(configFile);
-				main.instance.getLogger().info("Succsessfully loaded " + configName + "!");
+				config.load(file);
+				main.instance.getLogger().info("Succsessfully loaded " + file.getName() + "!");
 				
 			} catch (IOException | InvalidConfigurationException e) {
-				main.instance.getLogger().warning("Error while loading " + configName + "!");
+				main.instance.getLogger().warning("Error while loading " + file.getName() + "!");
 				e.printStackTrace();
 			}
 			

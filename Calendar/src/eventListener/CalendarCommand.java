@@ -17,7 +17,13 @@ public class CalendarCommand implements CommandExecutor {
 		if(command.getName().equalsIgnoreCase("calendar")){
 			Player player = (Player) sender;
 			
-			player.openInventory(new Calendar().createCalendar(LocalDateTime.now()));
+			/*
+			 * Checks if the player has permissions.
+			 */
+			if(player.hasPermission("Calendar.open")){
+				player.openInventory(new Calendar().createCalendar(LocalDateTime.now(), player));
+			}
+			
 		}
 		
 		return true;
