@@ -1,0 +1,15 @@
+#       TheTime
+#  Author: Joshua Wirtz
+# 
+# Formatting codes can be used with &[ForamttingCode], here you will find a list with all formatting codes: http://minecraft.gamepedia.com/Formatting_codes
+# 
+# Permissions:
+#   TheTime.*        - Gives permissions to all TheTime related commands.
+#   TheTime.calendar - Gives permissions to all TheTime calendar command.
+#      TheTime.calendar.default    - Gives permissions to execute /calendar.
+#      TheTime.calendar.TimeSystem - Gives permissions to execute /calendar [TimeSystem].
+#  
+Errors:
+  unknownCommand: '&4&oUnknown command! Try /calendar &r[TimeSystem]'
+  notPlayer: 'Calendar can not be opend in the consol!'
+  noPermissions: '&4&oYou dont have permissions to do that!'
