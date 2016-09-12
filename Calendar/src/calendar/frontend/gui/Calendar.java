@@ -4,6 +4,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.TextStyle;
+import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -237,8 +238,11 @@ public class Calendar {
 	/*
 	 * Replaces all Date text placeholder	
 	 */
-		
-		long dayOfWeek = timeSystem.getDayOfWeek().getValue();
+    long dayOfWeek = date.getDay();
+    if (date.getWeek() > 1) {
+        dayOfWeek -= (date.getWeek() - 1) * 7;
+    }
+	
 	
 	message = message
 			.replaceAll("%dayName%", DayOfWeek.of((int) dayOfWeek).getDisplayName(TextStyle.FULL, Locale.getDefault()))

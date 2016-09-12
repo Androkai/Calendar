@@ -1,7 +1,13 @@
 package calendar.backend.date;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.temporal.Temporal;
+import java.time.temporal.TemporalAccessor;
+import java.time.temporal.TemporalAmount;
 import java.time.temporal.TemporalField;
+import java.time.temporal.TemporalUnit;
 import java.time.temporal.WeekFields;
 import java.util.Locale;
 
@@ -59,10 +65,7 @@ public class Date {
 		this.minute = date.getMinute();
 		this.hour   = date.getHour();
 		this.day    = date.getDayOfMonth();
-		
-		TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfMonth();
-		this.week   = date.get(woy);
-		
+        this.week = (long)Math.ceil((double) day / 7.0);
 		this.month  = date.getMonthValue();
 		this.year   = date.getYear();
 		
