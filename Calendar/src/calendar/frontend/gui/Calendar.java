@@ -17,6 +17,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import calendar.backend.date.Date;
+import calendar.backend.date.DateUtils;
 import calendar.backend.item.ItemCreator;
 import calendar.backend.item.ItemProperties;
 import calendar.backend.item.Items;
@@ -26,6 +27,8 @@ import calendar.frontend.configs.CalendarConfig;
 public class Calendar {
 	
 	CalendarConfig calendarConfig = main.getCalendarConfig();
+	DateUtils dateUtils = main.getDateUtils();
+	
 	
 	Date date;
 	LocalDateTime timeSystem;
@@ -65,12 +68,17 @@ public class Calendar {
 		 * Gets the properties of the calendar.
 		 */
 		HashMap<InventoryProperties, Object> calendarProperties = calendarConfig.getCalendarProperties();
-		int weeks = (int) Math.ceil((double) timeSystem.getMonth().maxLength() / (double) 7);
+		
+		Date firstDayOfMonth = new Date(date);
+		firstDayOfMonth.setDay(1);
+		firstDayOfMonth.setWeek(1);
+		int firstWeekDay = (int) dateUtils.getDayOfWeek(firstDayOfMonth);
+		int weeksThisMonth = (int) Math.ceil((double) (timeSystem.getMonth().maxLength() + firstWeekDay) / (double) 7);
 		
 		/*
 		 * Creates the calendar inventory.
 		 */
-		int size = getSize(weeks);
+		int size = getSize(weeksThisMonth);
 		String name = (this.replacePlaceholder((String) calendarProperties.get(InventoryProperties.HEADER), new Date(timeSystem), timeSystem));
 		Inventory inventory = Bukkit.createInventory(null, size, name);
 		
@@ -92,20 +100,23 @@ public class Calendar {
 			/*
 			 * Declares variables for the slot of the day and week items.
 			 */
-			int daySlot = 0;
+			int daySlot = (int) firstWeekDay - 1;
+			
 			int weekSlot = 7;
 				
 				/*
 				 * Goes threw every week of the month.
 				 */
-				for(;weekOfMonth <= weeks; weekOfMonth++){
+				for(;weekOfMonth <= weeksThisMonth; weekOfMonth++, weekSlot = weekSlot + 9, daySlot = daySlot + 2){
 					date.setWeek(weekOfMonth);
 					
 						/*
 						 * Goes threw each day of the week and adds up the dayOfMonth value for each week day.
 						 */
-						for(int dayOfWeek = 1; dayOfWeek <= 7; dayOfWeek++, dayOfMonth++){
+						for(int dayOfWeek = 1; dayOfWeek <= 7; dayOfWeek++, dayOfMonth++, daySlot++){
 							date.setDay(dayOfMonth);
+							System.out.println(dayOfMonth);
+							
 							/*
 							 * Creates the item of the iterator dayOfWeek and sets it into the calendar.
 							 */
@@ -120,17 +131,18 @@ public class Calendar {
 								dayItems.add(dayItem);
 							}
 							
-								/*
-								 * Checks if the day is the last day of the month, if so it stops the day cycle.
-								 */
-								if(dayOfMonth == timeSystem.getMonth().maxLength()){
+								if(isEndOfWeek(date, daySlot)) {
+									daySlot++;
+									dayOfMonth++;
+									break;
+								}
+								
+								if(isEndOfMonth(date, timeSystem)) {
+									weekOfMonth = weeksThisMonth + 1;
+									dayOfWeek = 7 + 1;
 									break;
 								}
 							
-							/*
-							 * Adds up the slot for the day item.
-							 */
-							daySlot++;
 						}
 						
 						
@@ -141,18 +153,6 @@ public class Calendar {
 						inventory.setItem(weekSlot, weekItem);
 						weekItems.add(weekItem);
 						
-							/*
-							 * Checks if the week is the last of the month, if so it stops the week cycle.
-							 */
-							if(weekOfMonth == weeks){
-								break;
-							}
-						
-						/*
-						 * Adds up the week and day slot for a new line of the calendar.
-						 */
-						weekSlot = weekSlot + 9;
-						daySlot = daySlot + 2;
 				}
 				
 				// Add the items of the calendar to the items HashMap
@@ -167,6 +167,32 @@ public class Calendar {
 	 */
 	private int getSize(int weeks){
 		return weeks * 9;
+	}
+	
+	/*
+	 * Method to check if the given day if the last day of the month.
+	 */
+	private boolean isEndOfMonth(Date date, LocalDateTime timeSystem) {
+		
+		if(date.getDay() == timeSystem.getMonth().maxLength()) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	/*
+	 * Method to check if the given day is the last day of the week.
+	 */
+	private boolean isEndOfWeek(Date date, int daySlot) {
+		
+		if(date.getWeek() == 1){
+			if(daySlot >= (7 - 1)) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	private boolean isToday(Date date, LocalDateTime localDate){
@@ -234,15 +260,9 @@ public class Calendar {
 				.replaceAll("%week%", String.valueOf(date.getWeek()))
 				.replaceAll("%month%", String.valueOf(date.getMonth()))
 				.replaceAll("%year%", String.valueOf(date.getYear()));
-		
-	/*
-	 * Replaces all Date text placeholder	
-	 */
-    long dayOfWeek = date.getDay();
-    if (date.getWeek() > 1) {
-        dayOfWeek -= (date.getWeek() - 1) * 7;
-    }
 	
+	date.setDay(date.getDay() - 1);
+	long dayOfWeek = dateUtils.getDayOfWeek(date) + 1;
 	
 	message = message
 			.replaceAll("%dayName%", DayOfWeek.of((int) dayOfWeek).getDisplayName(TextStyle.FULL, Locale.getDefault()))

@@ -1,6 +1,6 @@
 name: Calendar
 main: calendar.backend.main.main
-version: 1.0
+version: 0.2
 author: Joshua Wirtz
 website: https://www.spigotmc.org/resources/25146/
 
