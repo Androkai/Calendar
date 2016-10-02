@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 
 import calendar.backend.main.main;
 import calendar.frontend.gui.Calendar;
-import calendar.frontend.gui.Storage;
 import calendar.frontend.gui.StorageUtils;
 
 public class CalendarCommand {
@@ -28,7 +27,7 @@ public class CalendarCommand {
 				if(player.hasPermission("Calendar.open")){
 				
 					// Creates a new calendar instance and saves it with storageCalendar()
-					Calendar calendar = new Calendar(LocalDateTime.now());
+					Calendar calendar = new Calendar(player, LocalDateTime.now());
 					storageUtils.storageCalendar(player, calendar);
 				
 					// Opens the inventory of the calendar for the command executor.

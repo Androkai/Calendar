@@ -12,10 +12,14 @@ import java.util.Locale;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
+import calendar.backend.appointments.Appointment;
+import calendar.backend.appointments.Flags;
 import calendar.backend.date.Date;
 import calendar.backend.date.DateUtils;
 import calendar.backend.item.ItemCreator;
@@ -36,10 +40,10 @@ public class Calendar {
 	Inventory inventory;
 	HashMap<Items, Object> items 	= new HashMap<Items, Object>();
 	
-	public Calendar(LocalDateTime timeSystem){
+	public Calendar(Player player, LocalDateTime timeSystem){
 		
 		date = new Date(timeSystem);
-		inventory = this.createInventory(date, timeSystem);
+		inventory = this.createInventory(player, date, timeSystem);
 		
 	}
 	
@@ -63,7 +67,7 @@ public class Calendar {
 	}
 	
 	
-	private Inventory createInventory(Date date, LocalDateTime timeSystem) {
+	private Inventory createInventory(Player player, Date date, LocalDateTime timeSystem) {
 		/*
 		 * Gets the properties of the calendar.
 		 */
@@ -115,18 +119,50 @@ public class Calendar {
 						 */
 						for(int dayOfWeek = 1; dayOfWeek <= 7; dayOfWeek++, dayOfMonth++, daySlot++){
 							date.setDay(dayOfMonth);
-							System.out.println(dayOfMonth);
 							
 							/*
 							 * Creates the item of the iterator dayOfWeek and sets it into the calendar.
 							 */
 							if(isToday(date, timeSystem)){
 								ItemStack todayItem = createItem(calendarItems.get(Items.TODAY), date, timeSystem);
+								
+								ItemMeta meta = todayItem.getItemMeta();
+								
+								for(Appointment appointment : main.getAppointmentConfig().getAppointmentsFromDate(player, date)) {
+								
+								List<String> lore = meta.getLore();
+										lore.add(" §4▌ §r" + appointment.getHeader());
+										lore.addAll(appointment.getDescription());
+								
+								meta.setLore(lore);
+								
+								}
+								
+								todayItem.setItemMeta(meta);
+								
 								inventory.setItem(daySlot, todayItem);
 								dayItems.add(todayItem);
 								items.put(Items.TODAY, todayItem);
 							}else{
 								ItemStack dayItem = createItem(calendarItems.get(Items.DAY), date, timeSystem);
+								
+								ItemMeta meta = dayItem.getItemMeta();
+								
+								for(Appointment appointment : main.getAppointmentConfig().getAppointmentsFromDate(player, date)) {
+								
+									meta.addEnchant(Enchantment.OXYGEN, 0, false);
+									if(appointment.getFlags().get(Flags.DELETED) != true) {
+										List<String> lore = meta.getLore();
+											lore.add(" §4▌ §r" + appointment.getHeader());
+											lore.addAll(appointment.getDescription());
+										
+										meta.setLore(lore);
+									}
+								
+								}
+								
+								dayItem.setItemMeta(meta);
+								
 								inventory.setItem(daySlot, dayItem);
 								dayItems.add(dayItem);
 							}

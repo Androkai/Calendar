@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import calendar.backend.configs.AppointmentConfig;
 import calendar.backend.date.DateUtils;
 import calendar.frontend.configs.CalendarConfig;
 import calendar.frontend.configs.CommandConfig;
@@ -22,6 +23,7 @@ public class main extends JavaPlugin {
 	public static HashMap<Player, Storage> storages = new HashMap<Player, Storage>();
 	
 	private static CalendarConfig calendarConfig;
+	private static AppointmentConfig appointmentConfig;
 	private static CommandConfig commandConfig;
 	
 	private static DateUtils dateUtils;
@@ -53,6 +55,7 @@ public class main extends JavaPlugin {
 	private void registerObjects() {
 		
 		calendarConfig = new CalendarConfig();
+		appointmentConfig = new AppointmentConfig();
 		commandConfig = new CommandConfig();
 		
 		dateUtils = new DateUtils();
@@ -83,6 +86,10 @@ public class main extends JavaPlugin {
 	 */
 	public static CalendarConfig getCalendarConfig() {
 		return calendarConfig;
+	}
+	
+	public static AppointmentConfig getAppointmentConfig() {
+		return appointmentConfig;
 	}
 	
 	public static DateUtils getDateUtils() {

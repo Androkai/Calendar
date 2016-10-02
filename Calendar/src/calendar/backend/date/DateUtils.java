@@ -1,8 +1,17 @@
 package calendar.backend.date;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class DateUtils {
+	
+	/*
+	 * Method to create a date with a timeSystem, but 0 paramaters.
+	 */
+	public Date getNullDate(){
+		return new Date(0, 0, 0, 0, 0, 0, 0);
+	}
+	
 	
 	/*
 	 * Method to equals to dates on day exaction. 

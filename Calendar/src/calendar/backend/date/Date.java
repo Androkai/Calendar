@@ -9,6 +9,7 @@ import java.time.temporal.TemporalAmount;
 import java.time.temporal.TemporalField;
 import java.time.temporal.TemporalUnit;
 import java.time.temporal.WeekFields;
+import java.util.List;
 import java.util.Locale;
 
 public class Date {
@@ -130,6 +131,23 @@ public class Date {
 
 	public void setYear(long year) {
 		this.year = year;
+	}
+	
+	// Method to out put the day
+	public String toString() {
+		
+		String format =
+				"{"
+			  + "Second=" 	+ getSecond() 	+ ","
+			  + "Minute=" 	+ getMinute() 	+ ","
+			  + "Hour=" 	+ getHour()   	+ ","
+			  + "Day=" 	    + getDay() 		+ ","
+			  + "Week=" 	+ getWeek()		+ ","
+			  + "Month="	+ getMonth()	+ ","
+			  + "Year="	    + getYear()
+			  + "}";
+		
+		return format;
 	}
 
 }

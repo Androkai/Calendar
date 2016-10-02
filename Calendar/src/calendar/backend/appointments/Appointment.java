@@ -1,5 +1,9 @@
 package calendar.backend.appointments;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import org.bukkit.entity.Player;
 
 import calendar.backend.date.Date;
@@ -8,47 +12,63 @@ import calendar.backend.main.main;
 
 public class Appointment {
 	
-	private DateUtils dateUtils = main.getDateUtils();
+	Date date;
+	Player creator;
 	
-	// Appointment parameters
-	Date appointmentDate;
-	Player appointmentCreator;
+	String header;
+	List<String> description;
 	
-	// Appointment Flags
-	boolean isPrivate;
-	boolean isDeleted;
+	// Flags
+	HashMap<Flags, Boolean> flags = new HashMap<Flags, Boolean>();
 	
-	public Appointment(Date date, Player creator, boolean isPrivate, boolean isDeleted) {
+	public Appointment(Date date, Player creator,
+					   String header, List<String> description,
+					   HashMap<Flags, Boolean> flags) {
 		
-		this.appointmentDate = date;
-		this.appointmentCreator = creator;
+		this.date = date;
+		this.creator = creator;
 		
-		this.isPrivate = isPrivate;
-		this.isDeleted = isDeleted;
+		this.header = header;
+		this.description = description;
+		
+		this.flags = flags;
+		
 	}
 	
-	// Getters for the appointment parameters
-	public Date getAppointmentDate() {
-		return appointmentDate;
+	public Date getDate() {
+		return date;
 	}
 	
 	public Player getCreator() {
-		return appointmentCreator;
+		return creator;
 	}
 	
-	public boolean isPrivate() {
-		return isPrivate;
+	public String getHeader() {
+		return header;
+	}
+	public List<String> getDescription() {
+		return description;
 	}
 	
-	public boolean isDeleted() {
-		return isDeleted;
+	public HashMap<Flags, Boolean> getFlags() {
+		return flags;
+	}
+	public void setFlags(HashMap<Flags, Boolean> flags) {
+		this.flags = flags;
 	}
 	
-	/*
-	 * Method to check if the appointment is on the given date.
-	 */
-	public boolean isOnDate(Date date) {
-		return dateUtils.equalsDay(date, appointmentDate);
+	// Method to output an Appointment
+	public String toString() {
+		
+		String format =	
+										   	   		   		  "\n"
+				+ "Date: " 		  + getDate().toString() 	+ "\n"
+				+ "Creator: " 	  +  getCreator()     	 	+ "\n"
+				+ "Header: " 	  + getHeader() 			+ "\n"
+				+ "Description: " + getDescription() 		+ "\n"
+				+ "Flags: "		  + flags.toString()		+ "";
+		
+		return format;
 	}
 
 }
