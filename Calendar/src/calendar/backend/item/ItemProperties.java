@@ -11,7 +11,7 @@ public enum ItemProperties {
 	ID,
 	AMOUNT,
 	
-	
+	ENCHANTMENT,
 	
 	
 

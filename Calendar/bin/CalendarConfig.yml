@@ -51,3 +51,13 @@ items:
     material: STAINED_GLASS_PANE
     id: 7
     amount: '%week%'
+  appointment:
+    lore:
+      prefix:
+        header: ' &4▌ &7'
+        description: ' &2▌ &8'
+    enchantment:
+      toggle: true
+      type: OXYGEN
+      strength: 0
+      ignoreMax: true

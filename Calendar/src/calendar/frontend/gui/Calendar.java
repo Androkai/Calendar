@@ -12,25 +12,33 @@ import java.util.Locale;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Statistic;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import calendar.backend.appointments.Appointment;
 import calendar.backend.appointments.Flags;
+import calendar.backend.configs.AppointmentConfig;
 import calendar.backend.date.Date;
 import calendar.backend.date.DateUtils;
+import calendar.backend.item.EnchantmentProperties;
 import calendar.backend.item.ItemCreator;
 import calendar.backend.item.ItemProperties;
 import calendar.backend.item.Items;
+import calendar.backend.item.AppointmentLoreProperties;
 import calendar.backend.main.main;
 import calendar.frontend.configs.CalendarConfig;
+import net.minecraft.server.v1_10_R1.Item;
 
 public class Calendar {
 	
 	CalendarConfig calendarConfig = main.getCalendarConfig();
+	AppointmentConfig appointmentConfig = main.getAppointmentConfig();
+	
 	DateUtils dateUtils = main.getDateUtils();
 	
 	
@@ -126,19 +134,9 @@ public class Calendar {
 							if(isToday(date, timeSystem)){
 								ItemStack todayItem = createItem(calendarItems.get(Items.TODAY), date, timeSystem);
 								
-								ItemMeta meta = todayItem.getItemMeta();
-								
-								for(Appointment appointment : main.getAppointmentConfig().getAppointmentsFromDate(player, date)) {
-								
-								List<String> lore = meta.getLore();
-										lore.add(" §4▌ §r" + appointment.getHeader());
-										lore.addAll(appointment.getDescription());
-								
-								meta.setLore(lore);
-								
+								for(Appointment appointment : appointmentConfig.getAppointmentsFromDate(player, date)) {
+									todayItem = addAppointmentToItem(appointment, calendarItems.get(Items.APPOINTMENT), todayItem);
 								}
-								
-								todayItem.setItemMeta(meta);
 								
 								inventory.setItem(daySlot, todayItem);
 								dayItems.add(todayItem);
@@ -146,22 +144,9 @@ public class Calendar {
 							}else{
 								ItemStack dayItem = createItem(calendarItems.get(Items.DAY), date, timeSystem);
 								
-								ItemMeta meta = dayItem.getItemMeta();
-								
-								for(Appointment appointment : main.getAppointmentConfig().getAppointmentsFromDate(player, date)) {
-								
-									meta.addEnchant(Enchantment.OXYGEN, 0, false);
-									if(appointment.getFlags().get(Flags.DELETED) != true) {
-										List<String> lore = meta.getLore();
-											lore.add(" §4▌ §r" + appointment.getHeader());
-											lore.addAll(appointment.getDescription());
-										
-										meta.setLore(lore);
-									}
-								
+								for(Appointment appointment : appointmentConfig.getAppointmentsFromDate(player, date)) {
+									dayItem = addAppointmentToItem(appointment, calendarItems.get(Items.APPOINTMENT), dayItem);
 								}
-								
-								dayItem.setItemMeta(meta);
 								
 								inventory.setItem(daySlot, dayItem);
 								dayItems.add(dayItem);
@@ -231,6 +216,9 @@ public class Calendar {
 		return false;
 	}
 	
+	/*
+	 * Method to check if the given date is today.
+	 */
 	private boolean isToday(Date date, LocalDateTime localDate){
 		
 		if(date.getYear() == localDate.getYear()){
@@ -254,10 +242,6 @@ public class Calendar {
 		 * Declares new variables for the item properties.
 		 */
 		String name = this.replacePlaceholder((String) itemProperties.get(ItemProperties.NAME), date, timeSystem);
-		Material material = (Material) itemProperties.get(ItemProperties.MATERIAL);
-		int id = (int) itemProperties.get(ItemProperties.ID);
-		int amount = Integer.valueOf(this.replacePlaceholder((String) itemProperties.get(ItemProperties.AMOUNT), date, timeSystem));
-		
 		List<String> lore = null;
 			if(itemProperties.get(ItemProperties.LORE) != null){
 				lore = new ArrayList<String>((List<String>) itemProperties.get(ItemProperties.LORE));
@@ -266,16 +250,70 @@ public class Calendar {
 							lore.set(lore.indexOf(line), this.replacePlaceholder(line, date, timeSystem));
 						}
 					}
-		}
+			}
+		
+		Material material = (Material) itemProperties.get(ItemProperties.MATERIAL);
+		int id = (int) itemProperties.get(ItemProperties.ID);
+		int amount = Integer.valueOf(this.replacePlaceholder((String) itemProperties.get(ItemProperties.AMOUNT), date, timeSystem));
 			
+		ItemStack item = new ItemCreator(material, amount,(short) id, name, lore).getItem();
+		
+		ItemMeta meta = item.getItemMeta();
+		
+			HashMap<EnchantmentProperties, Object> enchantment = (HashMap<EnchantmentProperties, Object>) itemProperties.get(ItemProperties.ENCHANTMENT);
+				if(enchantment != null) {
+					if((boolean) enchantment.get(EnchantmentProperties.TOGGLE) != false){
+						meta.addEnchant(Enchantment.getByName((String) enchantment.get(EnchantmentProperties.TYPE)),
+										(int) enchantment.get(EnchantmentProperties.STRENGTH),
+										(boolean) enchantment.get(EnchantmentProperties.IGNOREMAX));
+						meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+					}
+				}
+				
+		item.setItemMeta(meta);
+		
+		
 		/*
 		 * Checks if the item is toggled, if so it returns the item, if not it return null.
 		 */
 		if((boolean) itemProperties.get(ItemProperties.TOGGLE)){
-			return new ItemCreator(material, amount,(short) id, name, lore).getItem();
+			return item;
 		}else{
 			return null;
 		}
+	}
+	
+	/*
+	 * Method to add an appointment to an item.
+	 */
+	private ItemStack addAppointmentToItem(Appointment appointment, HashMap<ItemProperties, Object> appointmentProperties, ItemStack item) {
+		HashMap<AppointmentLoreProperties, String> loreProperties = (HashMap<AppointmentLoreProperties, String>) appointmentProperties.get(ItemProperties.LORE);
+		
+		ItemMeta meta = item.getItemMeta();
+		
+			List<String> lore = meta.getLore();
+			
+			String prefixHeader = loreProperties.get(AppointmentLoreProperties.HeaderPrefix);
+			String header = appointment.getHeader();
+			
+			header = conact(prefixHeader, header);
+			header = replacePlaceholder(header, date, timeSystem);
+			lore.add(header);
+			
+			
+			String prefixDescription = loreProperties.get(AppointmentLoreProperties.DescriptionPrefix);
+			List<String> description = appointment.getDescription();
+			
+				for(String line : description) {
+					line = conact(prefixDescription, line);
+					line = replacePlaceholder(line, date, timeSystem);
+					lore.add(line);
+				}
+			
+		meta.setLore(lore);
+		item.setItemMeta(meta);
+		
+		return item;
 	}
 	
 	/*
@@ -305,6 +343,10 @@ public class Calendar {
 			.replaceAll("%monthName%", Month.of((int) date.getMonth()).getDisplayName(TextStyle.FULL, Locale.getDefault()));
 		
 		return message;
+	}
+	
+	private String conact(String arg1, String arg2) {
+		return arg1 + arg2;
 	}
 	
 }

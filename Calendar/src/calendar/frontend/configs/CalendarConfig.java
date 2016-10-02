@@ -6,11 +6,14 @@ import java.util.List;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.enchantments.Enchantment;
 
 import calendar.backend.configs.Config;
 import calendar.backend.configs.ConfigUtils;
+import calendar.backend.item.EnchantmentProperties;
 import calendar.backend.item.ItemProperties;
 import calendar.backend.item.Items;
+import calendar.backend.item.AppointmentLoreProperties;
 import calendar.backend.main.main;
 import calendar.frontend.gui.InventoryProperties;
 import net.md_5.bungee.api.ChatColor;
@@ -66,7 +69,10 @@ public class CalendarConfig extends Config implements ConfigUtils {
 				//Week
 				path = defaultPath + "week.";
 				items.put(Items.WEEK, getItemProperties(path));
-		
+				
+				//Appointment
+				path = defaultPath + "appointment.";
+				items.put(Items.APPOINTMENT, getAppointmentProperties(path));
 		
 		/*
 		 * Puts the getted properties into the calendar properties HashMap.
@@ -83,18 +89,21 @@ public class CalendarConfig extends Config implements ConfigUtils {
 	 * Method the get the item properties, of an given path, out of the config file.
 	 */
 	private HashMap<ItemProperties, Object> getItemProperties(String path){
-		
 		HashMap<ItemProperties, Object> item = new HashMap<ItemProperties, Object>();
 		
 		/*
 		 * Puts all item properties, out of the configuration file, into the 'itemProperties' HashMap.
 		 */
 		item.put(ItemProperties.TOGGLE, getBoolean(path + "toggle"));
+		
 		item.put(ItemProperties.NAME, getString(path + "name"));
+		item.put(ItemProperties.LORE, getListString(path + "lore"));
+		
 		item.put(ItemProperties.MATERIAL, Material.valueOf(config.getString(path + "material")));
 		item.put(ItemProperties.ID, getInteger(path + "id"));
 		item.put(ItemProperties.AMOUNT, config.getString(path + "amount"));
-		item.put(ItemProperties.LORE, getListString(path + "lore"));
+		
+		item.put(ItemProperties.ENCHANTMENT, getEnchantment(path + "enchantment."));
 		
 		/*
 		 * Returns the HashMap 'itemProperties'
@@ -102,6 +111,18 @@ public class CalendarConfig extends Config implements ConfigUtils {
 		return item;
 	}
 	
+	private HashMap<ItemProperties, Object> getAppointmentProperties(String path) {
+		HashMap<ItemProperties, Object> item = new HashMap<ItemProperties, Object>();
+		
+			item.put(ItemProperties.LORE, getAppointmentName(path + "lore."));
+			
+		return item;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see calendar.backend.configs.Config#reloadConfig()
+	 */
 	public FileConfiguration reloadConfig() {
 		return config = super.reloadConfig();
 	}
@@ -172,6 +193,40 @@ public class CalendarConfig extends Config implements ConfigUtils {
 		}
 		
 		return arrayList;
+	}
+	
+	/*
+	 * Method to get the enchantment properties of an item.
+	 */
+	public HashMap<EnchantmentProperties, Object> getEnchantment(String path) {
+		HashMap<EnchantmentProperties, Object> enchantment = new HashMap<EnchantmentProperties, Object>();
+		
+			if(config.contains(path)) {
+				enchantment.put(EnchantmentProperties.TOGGLE, getBoolean(path + "toggle"));
+				enchantment.put(EnchantmentProperties.TYPE, config.getString(path + "type"));
+				enchantment.put(EnchantmentProperties.STRENGTH, getInteger(path + "strength"));
+				enchantment.put(EnchantmentProperties.IGNOREMAX, getBoolean(path + "ignoreMax"));
+				
+					return enchantment;
+			}
+			
+			return null;
+	}
+	
+	/*
+	 * Method to get the name properties of an item.
+	 */
+	private HashMap<AppointmentLoreProperties, String> getAppointmentName(String path) {
+		HashMap<AppointmentLoreProperties, String> name = new HashMap<AppointmentLoreProperties, String>();
+		
+		if(config.contains(path)) {
+			name.put(AppointmentLoreProperties.HeaderPrefix, getString(path + "prefix.header"));
+			name.put(AppointmentLoreProperties.DescriptionPrefix, getString(path + "prefix.description"));
+			
+			return name;
+		}
+			
+		return null;
 	}
 
 }

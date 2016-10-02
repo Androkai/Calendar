@@ -227,7 +227,7 @@ public class AppointmentConfig extends Config implements ConfigUtils {
 			List<String> list = new ArrayList<String>(configList);
 			
 			for(int index = 0; index < list.size(); index++){
-				String line = " §2▌ §r" + list.get(index);
+				String line = list.get(index);
 				
 				if(list.get(index) != null) {
 					list.set(index, ChatColor.translateAlternateColorCodes('&', line));
