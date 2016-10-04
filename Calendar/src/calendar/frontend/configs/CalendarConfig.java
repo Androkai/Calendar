@@ -115,6 +115,7 @@ public class CalendarConfig extends Config implements ConfigUtils {
 		HashMap<ItemProperties, Object> item = new HashMap<ItemProperties, Object>();
 		
 			item.put(ItemProperties.LORE, getAppointmentName(path + "lore."));
+			item.put(ItemProperties.ENCHANTMENT, getEnchantment(path + "enchantment."));
 			
 		return item;
 	}

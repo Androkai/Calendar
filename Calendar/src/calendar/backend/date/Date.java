@@ -138,13 +138,12 @@ public class Date {
 		
 		String format =
 				"{"
-			  + "Second=" 	+ getSecond() 	+ ","
-			  + "Minute=" 	+ getMinute() 	+ ","
-			  + "Hour=" 	+ getHour()   	+ ","
-			  + "Day=" 	    + getDay() 		+ ","
-			  + "Week=" 	+ getWeek()		+ ","
-			  + "Month="	+ getMonth()	+ ","
-			  + "Year="	    + getYear()
+				+ getMonth() 	+ "."
+				+ getDay()		+ "."
+				+ getYear()		+ " "
+				+ getHour()		+ ":"
+				+ getMinute() 	+ ":"
+				+ getSecond() 	+ ""
 			  + "}";
 		
 		return format;

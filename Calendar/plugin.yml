@@ -1,10 +1,21 @@
 name: Calendar
 main: calendar.backend.main.main
-version: 0.2
+version: 0.2.4
 author: Joshua Wirtz
-website: https://www.spigotmc.org/resources/25146/
+website: https://www.spigotmc.org/resources/29122/
 
 commands:
  calendar:
   usage: /calendar
-  description: TheTime calendar function.
+  description: Calendar function.
+ appointment:
+  usage: /appointment
+  description: Calendar appointment function.
+  
+permissions:
+  calendar.*:
+    description: Gives access to all Calendar commands.
+    children:
+      calendar.open: true
+      calendar.reload: true
+      calendar.appointment.add: true

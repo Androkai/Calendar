@@ -5,5 +5,8 @@ public enum CommandErrors {
 	unkownCommand,
 	notPlayer,
 	noPermissions,
+	notEnoughArgs,
+	
+	appointmentAlreadyExists,
 
 }

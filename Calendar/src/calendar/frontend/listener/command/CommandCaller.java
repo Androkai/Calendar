@@ -9,11 +9,13 @@ public class CommandCaller implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		
-		// Checks if the command name equals one of the calendar commands.
 		if(command.getName().equalsIgnoreCase("calendar")){
 			new CalendarCommand(sender, command, label, args);
 		}
 		
+		if(command.getName().equalsIgnoreCase("appointment")){
+			new AppointmentCommand(sender, command, label, args);
+		}
 		
 		return true;
 	}

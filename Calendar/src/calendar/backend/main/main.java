@@ -1,6 +1,7 @@
 package calendar.backend.main;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -17,9 +18,10 @@ import calendar.frontend.listener.inventory.InventoryCaller;
 
 public class main extends JavaPlugin {
 	
-	public static String tag = "[§6§lCalendar§r]";
+	public static String tag = "[§6§lCalendar§r] ";
 	
 	public static main instance;
+	public static UUID sUUID = UUID.fromString("bb5fb548-4dff-4eb1-b9f6-f618be8ed6e9");
 	public static HashMap<Player, Storage> storages = new HashMap<Player, Storage>();
 	
 	private static CalendarConfig calendarConfig;
@@ -76,8 +78,10 @@ public class main extends JavaPlugin {
 	 */
 	private void registerCommands() {
 		
+		CommandCaller commandCaller = new CommandCaller();
 		
-		getCommand("calendar").setExecutor(new CommandCaller());
+		getCommand("calendar").setExecutor(commandCaller);
+		getCommand("appointment").setExecutor(commandCaller);
 		
 	}
 	
@@ -90,6 +94,10 @@ public class main extends JavaPlugin {
 	
 	public static AppointmentConfig getAppointmentConfig() {
 		return appointmentConfig;
+	}
+	
+	public static CommandConfig getCommandConfig() {
+		return commandConfig;
 	}
 	
 	public static DateUtils getDateUtils() {

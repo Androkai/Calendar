@@ -1,8 +1,9 @@
 creator(uuid):
   'mm_dd_yyyy':
     number:
-      header: 
+      header: 'example'
       description:
+      - 'example'
       flags:
         public: true
         edited: false

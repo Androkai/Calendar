@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -28,10 +29,27 @@ public class AppointmentConfig extends Config implements ConfigUtils {
 		config = super.loadConfig();
 	}
 	
+	public boolean createAppointment(UUID creator, Date date, int number, String header, List<String> description, HashMap<Flags, Boolean> flags) {
+		String path = createAppointmentPath(creator, date, number);
+		
+		if(!config.contains(path)) {
+			
+				setHeader(path, header);
+				setDescription(path, description);
+				setFlags(path, flags);
+				
+				super.saveConfig();
+		}else{
+			return false;
+		}
+		
+		return true;
+	}
+	
 	/*
 	 * Gets all appointments of a player, from a specific date.
 	 */
-	public ArrayList<Appointment> getAppointmentsFromDate(Player creator, Date date) {
+	public ArrayList<Appointment> getAppointmentsFromDate(UUID creator, Date date) {
 		ArrayList<Appointment> appointments = new ArrayList<Appointment>();
 		String appointmentListPath = createAppointmentListPath(creator, date);
 		
@@ -53,7 +71,7 @@ public class AppointmentConfig extends Config implements ConfigUtils {
 	/*
 	 * Method to get an Appointment out of the config.
 	 */
-	public Appointment getAppointment(Player creator, Date date, int number) {
+	public Appointment getAppointment(UUID creator, Date date, int number) {
 		String appointmentPath = createAppointmentPath(creator, date, number);
 		
 		Appointment appointment;
@@ -70,57 +88,79 @@ public class AppointmentConfig extends Config implements ConfigUtils {
 	/*
 	 * Method to get the head of an given appointment path.
 	 */
-	private String getHeader(String appointmentPath) {
-		String header = getString(appointmentPath + "header");
+	private String getHeader(String path) {
+		path = path + "header";
 		
+		String header = getString(path);
 		return header;
+	}
+	
+	private void setHeader(String path, String header) {
+		path = path + "header";
+		
+		setString(path, header);
 	}
 	
 	
 	/*
 	 * Method to get the description of an given appointment path.
 	 */
-	private List<String> getDescription(String appointmentPath) {
-		String descriptionPath = appointmentPath + "description";
+	private List<String> getDescription(String path) {
+		path = path + "description";
 		
-		return getListString(descriptionPath);
+		return getListString(path);
+	}
+	
+	/*
+	 * Method to set the description of an given appointment path.
+	 */
+	private void setDescription(String path, List<String> description) {
+		path = path + "description";
+		
+		setListString(path, description);
 	}
 	
 	/*
 	 * Method to get the flags of a given appointment path.
 	 */
-	private HashMap<Flags, Boolean> getFlags(String appointmentPath) {
-		String flagPath = appointmentPath + "flags.";
+	private HashMap<Flags, Boolean> getFlags(String path) {
+		path = path + "flags.";
 		
 		HashMap<Flags, Boolean> flags = new HashMap<Flags, Boolean>();
 		
-			boolean isPublic;
 			boolean isEdited;
 			boolean isDeleted;
 			
-			isPublic = getBoolean(flagPath 	+ "public");
-			isEdited = getBoolean(flagPath 	+ "edited");
-			isDeleted = getBoolean(flagPath + "deleted");
+			isEdited = getBoolean(path 	+ "edited");
+			isDeleted = getBoolean(path + "deleted");
 		
-			flags.put(Flags.PUBLIC,  isPublic);
 			flags.put(Flags.EDITED,  isEdited);
 			flags.put(Flags.DELETED, isDeleted);
 		
 		return flags;
 	}
 	
+	private void setFlags(String path, HashMap<Flags, Boolean> flags) {
+		path = path + "flags.";
+		
+			boolean isEdited 	= flags.get(Flags.EDITED);
+			boolean isDeleted 	= flags.get(Flags.DELETED);
+			
+			setBoolean(path + "edited", isEdited);
+			setBoolean(path + "deleted", isDeleted);
+	}
+	
 	/*
 	 * Method to create an appointment path.
 	 */
-	private String createAppointmentPath(Player creator, Date date, int number) {
+	private String createAppointmentPath(UUID creator, Date date, int number) {
 		
 		String appointmentPath;
 		
-		String creatorUUID = String.valueOf(creator.getUniqueId());
 		String datePath	   = dateToDatePath(date);
 		
 		appointmentPath =
-				creatorUUID
+				creator
 				 + "." +
 				datePath
 				 + "." +
@@ -133,20 +173,13 @@ public class AppointmentConfig extends Config implements ConfigUtils {
 	/*
 	 * Method to create an appointment list path.
 	 */
-	private String createAppointmentListPath(Player creator, Date date) {
-		
-		String appointmentPath;
-		
-		String creatorUUID = String.valueOf(creator.getUniqueId());
+	private String createAppointmentListPath(UUID creator, Date date) {
+		String path;
 		String datePath	   = dateToDatePath(date);
 		
-		appointmentPath =
-				creatorUUID
-				 + "." +
-				datePath
-				+  ".";
+		path = creator + "." + datePath +  ".";
 		
-		return appointmentPath;
+		return path;
 		
 	}
 	
@@ -155,14 +188,14 @@ public class AppointmentConfig extends Config implements ConfigUtils {
 	 */
 	private String dateToDatePath(Date date) {
 		
-		String datePath = 
+		String path = 
 					  String.valueOf(date.getMonth())
 					 + "_" +
 					  String.valueOf(date.getDay())
 					 + "_" +
 					  String.valueOf(date.getYear());
 		
-		return datePath;
+		return path;
 	}
 	
 	/*
@@ -180,6 +213,14 @@ public class AppointmentConfig extends Config implements ConfigUtils {
 		
 		return date;
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see calendar.backend.configs.Config#reloadConfig()
+	 */
+	public FileConfiguration reloadConfig() {
+		return config = super.reloadConfig();
+	}
 
 	/*
 	 * @see backend.configs.ConfigUtils#getString(java.lang.String)
@@ -189,12 +230,22 @@ public class AppointmentConfig extends Config implements ConfigUtils {
 		return ChatColor.translateAlternateColorCodes('&', config.getString(path));
 	}
 	
+	public void setString(String path, String value) {
+		createSection(path);
+	
+		value = value.replaceAll("§", "&");
+		config.set(path, value);
+	}
 	/*
 	 * @see backend.configs.ConfigUtils#getInteger(java.lang.String)
 	 */
 	@Override
 	public Integer getInteger(String path) {
 		return config.getInt(path);
+	}
+	
+	public void setInteger(String path, int value) {
+		config.set(path, value);
 	}
 	
 	/*
@@ -204,6 +255,12 @@ public class AppointmentConfig extends Config implements ConfigUtils {
 	public Long getLong(String path) {
 		return Long.valueOf(config.getString(path));
 	}
+	
+	public void setLong(String path, long value) {
+		createSection(path);
+		
+		config.set(path, value);
+	}
 
 	/*
 	 * @see backend.configs.ConfigUtils#getBoolean(java.lang.String)
@@ -211,6 +268,12 @@ public class AppointmentConfig extends Config implements ConfigUtils {
 	@Override
 	public Boolean getBoolean(String path) {
 		return config.getBoolean(path);
+	}
+	
+	public void setBoolean(String path, boolean value) {
+		createSection(path);
+		
+		config.set(path, value);
 	}
 
 	/*
@@ -241,6 +304,18 @@ public class AppointmentConfig extends Config implements ConfigUtils {
 		
 		return null;
 	}
+	
+	public void setListString(String path, List<String> list) {
+		createSection(path);
+		
+		for(String line : list) {
+			int index = list.indexOf(line);
+			
+			list.set(index, line.replaceAll("§", "&"));
+		}
+		
+		config.set(path, list);
+	}
 
 	/*
 	 * @see backend.configs.ConfigUtils#getArrayListString(java.lang.String)
@@ -256,6 +331,14 @@ public class AppointmentConfig extends Config implements ConfigUtils {
 		}
 		
 		return arrayList;
+	}
+	
+	/*
+	 * Method to create an new config section.
+	 */
+	private void createSection(String path) {
+		config.createSection(path);
+		super.saveConfig();
 	}
 
 }

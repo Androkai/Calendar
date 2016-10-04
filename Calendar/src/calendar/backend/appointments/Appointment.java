@@ -3,6 +3,7 @@ package calendar.backend.appointments;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
@@ -13,7 +14,7 @@ import calendar.backend.main.main;
 public class Appointment {
 	
 	Date date;
-	Player creator;
+	UUID creator;
 	
 	String header;
 	List<String> description;
@@ -21,7 +22,7 @@ public class Appointment {
 	// Flags
 	HashMap<Flags, Boolean> flags = new HashMap<Flags, Boolean>();
 	
-	public Appointment(Date date, Player creator,
+	public Appointment(Date date, UUID creator,
 					   String header, List<String> description,
 					   HashMap<Flags, Boolean> flags) {
 		
@@ -39,7 +40,7 @@ public class Appointment {
 		return date;
 	}
 	
-	public Player getCreator() {
+	public UUID getCreator() {
 		return creator;
 	}
 	

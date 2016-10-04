@@ -29,8 +29,11 @@ public class CommandConfig extends Config implements ConfigUtils {
 		String path = "Errors.";
 		
 		errors.put(CommandErrors.noPermissions, main.tag + getString(path + "noPermissions"));
-		errors.put(CommandErrors.notPlayer, main.tag + getString(path + "notPlayer"));
+		errors.put(CommandErrors.notPlayer, main.tag + getString(path + 	"notPlayer"));
 		errors.put(CommandErrors.unkownCommand, main.tag + getString(path + "unknownCommand"));
+		errors.put(CommandErrors.notEnoughArgs, main.tag + getString(path + "notEnoughArgs"));
+		
+		errors.put(CommandErrors.appointmentAlreadyExists, main.tag + getString(path + "appointmentAlreadyExsists"));
 		
 		return errors;
 	}

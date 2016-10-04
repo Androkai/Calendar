@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -133,20 +134,14 @@ public class Calendar {
 							 */
 							if(isToday(date, timeSystem)){
 								ItemStack todayItem = createItem(calendarItems.get(Items.TODAY), date, timeSystem);
-								
-								for(Appointment appointment : appointmentConfig.getAppointmentsFromDate(player, date)) {
-									todayItem = addAppointmentToItem(appointment, calendarItems.get(Items.APPOINTMENT), todayItem);
-								}
+								todayItem = addAllAppointmentPropertiesToItem(todayItem, calendarItems, player.getUniqueId(), date);
 								
 								inventory.setItem(daySlot, todayItem);
 								dayItems.add(todayItem);
 								items.put(Items.TODAY, todayItem);
 							}else{
 								ItemStack dayItem = createItem(calendarItems.get(Items.DAY), date, timeSystem);
-								
-								for(Appointment appointment : appointmentConfig.getAppointmentsFromDate(player, date)) {
-									dayItem = addAppointmentToItem(appointment, calendarItems.get(Items.APPOINTMENT), dayItem);
-								}
+								dayItem = addAllAppointmentPropertiesToItem(dayItem, calendarItems, player.getUniqueId(), date);
 								
 								inventory.setItem(daySlot, dayItem);
 								dayItems.add(dayItem);
@@ -263,7 +258,8 @@ public class Calendar {
 			HashMap<EnchantmentProperties, Object> enchantment = (HashMap<EnchantmentProperties, Object>) itemProperties.get(ItemProperties.ENCHANTMENT);
 				if(enchantment != null) {
 					if((boolean) enchantment.get(EnchantmentProperties.TOGGLE) != false){
-						meta.addEnchant(Enchantment.getByName((String) enchantment.get(EnchantmentProperties.TYPE)),
+						meta.addEnchant(
+										Enchantment.getByName((String) enchantment.get(EnchantmentProperties.TYPE)),
 										(int) enchantment.get(EnchantmentProperties.STRENGTH),
 										(boolean) enchantment.get(EnchantmentProperties.IGNOREMAX));
 						meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -284,31 +280,57 @@ public class Calendar {
 	}
 	
 	/*
+	 * Method to add all appointment properties to an item.
+	 */
+	private ItemStack addAllAppointmentPropertiesToItem(ItemStack item, HashMap<Items, HashMap<ItemProperties, Object>> calendarItems, UUID creator, Date date) {
+		
+		for(Appointment appointment : appointmentConfig.getAppointmentsFromDate(main.sUUID, date)) {
+			item = addAppointmentPropertiesToItem(appointment, calendarItems.get(Items.APPOINTMENT), item);
+		}
+		
+		for(Appointment appointment : appointmentConfig.getAppointmentsFromDate(creator, date)) {
+			item = addAppointmentPropertiesToItem(appointment, calendarItems.get(Items.APPOINTMENT), item);
+		}
+		return item;
+	}
+	
+	/*
 	 * Method to add an appointment to an item.
 	 */
-	private ItemStack addAppointmentToItem(Appointment appointment, HashMap<ItemProperties, Object> appointmentProperties, ItemStack item) {
-		HashMap<AppointmentLoreProperties, String> loreProperties = (HashMap<AppointmentLoreProperties, String>) appointmentProperties.get(ItemProperties.LORE);
-		
+	private ItemStack addAppointmentPropertiesToItem(Appointment appointment, HashMap<ItemProperties, Object> appointmentProperties, ItemStack item) {
 		ItemMeta meta = item.getItemMeta();
-		
+			
+			HashMap<AppointmentLoreProperties, String> loreProperties = (HashMap<AppointmentLoreProperties, String>) appointmentProperties.get(ItemProperties.LORE);
+			
+			String prefix;
 			List<String> lore = meta.getLore();
 			
-			String prefixHeader = loreProperties.get(AppointmentLoreProperties.HeaderPrefix);
+			prefix = loreProperties.get(AppointmentLoreProperties.HeaderPrefix);
 			String header = appointment.getHeader();
 			
-			header = conact(prefixHeader, header);
+			header = conact(prefix, header);
 			header = replacePlaceholder(header, date, timeSystem);
 			lore.add(header);
 			
 			
-			String prefixDescription = loreProperties.get(AppointmentLoreProperties.DescriptionPrefix);
+			prefix = loreProperties.get(AppointmentLoreProperties.DescriptionPrefix);
 			List<String> description = appointment.getDescription();
 			
 				for(String line : description) {
-					line = conact(prefixDescription, line);
+					line = conact(prefix, line);
 					line = replacePlaceholder(line, date, timeSystem);
 					lore.add(line);
 				}
+				
+			HashMap<EnchantmentProperties, Object> enchantment = (HashMap<EnchantmentProperties, Object>) appointmentProperties.get(ItemProperties.ENCHANTMENT);
+			
+			if((boolean) enchantment.get(EnchantmentProperties.TOGGLE)){
+				meta.addEnchant(
+					Enchantment.getByName((String) enchantment.get(EnchantmentProperties.TYPE)), 
+					(int) enchantment.get(EnchantmentProperties.STRENGTH), 
+					(boolean) enchantment.get(EnchantmentProperties.IGNOREMAX));
+				meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+			}
 			
 		meta.setLore(lore);
 		item.setItemMeta(meta);

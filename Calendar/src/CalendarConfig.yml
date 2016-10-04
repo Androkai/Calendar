@@ -1,4 +1,4 @@
-#       TheTime
+#       Calendar
 #  Author: Joshua Wirtz
 # 
 #     IDs for block color/type ids you can find here: http://minecraft.gamepedia.com/Data_values
@@ -12,11 +12,9 @@
 #       - %week%      - displays the week of the item.
 #       - %month%     - displays the current month.
 #       - %year%      - displays the current year.
-#       - %era%       - displays the current era.
 #     
 #       - %dayName%   - displays the name of the day.
 #       - %monthName% - displays the current month name.
-#       - %eraName%   - displays the current era name.
 # 
 #    A list of all avilable block materials can be found here: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html 
 #  

@@ -12,6 +12,26 @@ public class DateUtils {
 		return new Date(0, 0, 0, 0, 0, 0, 0);
 	}
 	
+	/*
+	 * Method to get a date out of a given string
+	 */
+	public Date fromString(String dateString) {
+		
+		String[] dateUnits = dateString.split("_")
+				;
+			if(dateUnits.length == 3) {
+				Date date = getNullDate();
+				
+				date.setMonth(Long.valueOf(dateUnits[0]));
+				date.setDay	(Long.valueOf(dateUnits[1]));
+				date.setYear(Long.valueOf(dateUnits[2]));
+				
+				return date;
+			}
+		
+		return getNullDate();
+	}
+	
 	
 	/*
 	 * Method to equals to dates on day exaction. 
