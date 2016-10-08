@@ -8,5 +8,6 @@ public enum CommandErrors {
 	notEnoughArgs,
 	
 	appointmentAlreadyExists,
+	appointmentNotExists,
 
 }

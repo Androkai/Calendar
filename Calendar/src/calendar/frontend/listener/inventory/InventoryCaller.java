@@ -15,7 +15,6 @@ public class InventoryCaller implements Listener {
 	
 	@EventHandler
 	public void onInventoryClose(InventoryCloseEvent event){
-		
 		new Close(event);
 		
 	}

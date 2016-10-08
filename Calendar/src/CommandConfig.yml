@@ -9,4 +9,11 @@ Errors:
   unknownCommand: '&oUnknown command! Try &r/calendar'
   notPlayer: 'This command is not executable in the consol!'
   noPermissions: '&oYou do not have permissions to do that!'
-  appointmentAlreadyExsists: '&oThis appointment already exists!'
+  appointmentAlreadyExsists: '&oThis appointment already exsist!'
+  appointmentNotExsists: '&oThis appointment does not exsist!'
+Notifications:
+  configsReloaded: '&oConfigs have been reloaded!'
+  appointmentAdded: '&oAppointment added!'
+  appointmentRemoved: '&oAppointment removed!'
+  appointmentRestored: '&oAppointment restored!'
+  

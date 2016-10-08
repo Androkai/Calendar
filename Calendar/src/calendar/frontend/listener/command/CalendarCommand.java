@@ -1,6 +1,7 @@
 package calendar.frontend.listener.command;
 
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAccessor;
 import java.util.HashMap;
 
 import org.bukkit.Bukkit;
@@ -10,17 +11,21 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import calendar.backend.main.main;
+import calendar.frontend.configs.CalendarConfig;
 import calendar.frontend.configs.CommandConfig;
 import calendar.frontend.configs.CommandErrors;
+import calendar.frontend.configs.CommandNotifications;
 import calendar.frontend.gui.Calendar;
 import calendar.frontend.gui.StorageUtils;
 
 public class CalendarCommand {
 
+	CalendarConfig calendarConfig = main.getCalendarConfig();
 	CommandConfig commandConfig = main.getCommandConfig();
 	StorageUtils storageUtils = main.getStorageUtils();
 	
 	HashMap<CommandErrors, String> errors = commandConfig.getErrors();
+	HashMap<CommandNotifications, String> notifications = commandConfig.getNotifications();
 	
 	public CalendarCommand(CommandSender sender, Command command, String label, String[] args) {
 		
@@ -36,7 +41,7 @@ public class CalendarCommand {
 					if(player.hasPermission("calendar.open")){
 				
 						// Creates a new calendar instance and saves it with storageCalendar()
-						Calendar calendar = new Calendar(player, LocalDateTime.now());
+						Calendar calendar = new Calendar(player, LocalDateTime.now(calendarConfig.getTimeZone().toZoneId()));
 						storageUtils.storageCalendar(player, calendar);
 				
 						// Opens the inventory of the calendar for the command executor.
@@ -45,7 +50,6 @@ public class CalendarCommand {
 					}else{
 						player.sendMessage(errors.get(CommandErrors.noPermissions));
 					}
-					
 				}else 
 					
 					if(args.length == 1) {
@@ -68,12 +72,10 @@ public class CalendarCommand {
 						}else
 							
 						if(args[0].equalsIgnoreCase("reload")) {
-							
 							if(player.hasPermission("calendar.reload")){
 								
-								main.getCalendarConfig().reloadConfig();
-								main.getCommandConfig().reloadConfig();
-								main.getAppointmentConfig().reloadConfig();
+								reloadConfigs();
+								player.sendMessage(notifications.get(CommandNotifications.configsReloaded));
 								
 							}else{
 								player.sendMessage(errors.get(CommandErrors.noPermissions));
@@ -93,7 +95,13 @@ public class CalendarCommand {
 		
 	}
 
-	
+	private void reloadConfigs() {
+		
+		main.getCalendarConfig().reloadConfig();
+		main.getCommandConfig().reloadConfig();
+		main.getAppointmentConfig().reloadConfig();
+		
+	}
 	
 	
 }

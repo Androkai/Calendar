@@ -15,6 +15,7 @@ public class Appointment {
 	
 	Date date;
 	UUID creator;
+	String name;
 	
 	String header;
 	List<String> description;
@@ -22,12 +23,13 @@ public class Appointment {
 	// Flags
 	HashMap<Flags, Boolean> flags = new HashMap<Flags, Boolean>();
 	
-	public Appointment(Date date, UUID creator,
+	public Appointment(UUID creator, Date date, String name,
 					   String header, List<String> description,
 					   HashMap<Flags, Boolean> flags) {
 		
 		this.date = date;
 		this.creator = creator;
+		this.name = name;
 		
 		this.header = header;
 		this.description = description;
@@ -44,6 +46,10 @@ public class Appointment {
 		return creator;
 	}
 	
+	public String getName() {
+		return name;
+	}
+	
 	public String getHeader() {
 		return header;
 	}
@@ -56,6 +62,13 @@ public class Appointment {
 	}
 	public void setFlags(HashMap<Flags, Boolean> flags) {
 		this.flags = flags;
+	}
+	
+	//Method to check if the appointment is delete
+	public boolean isDeleted() {
+		boolean isDeleted = flags.get(Flags.DELETED);
+		
+		return isDeleted;
 	}
 	
 	// Method to output an Appointment

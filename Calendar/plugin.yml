@@ -1,6 +1,6 @@
 name: Calendar
 main: calendar.backend.main.main
-version: 0.2.4
+version: 1.2
 author: Joshua Wirtz
 website: https://www.spigotmc.org/resources/29122/
 
@@ -9,7 +9,7 @@ commands:
   usage: /calendar
   description: Calendar function.
  appointment:
-  usage: /appointment
+  usage: /appointment [add/remove] [Date] [Name] [Header] [Description] [Public]
   description: Calendar appointment function.
   
 permissions:
@@ -18,4 +18,25 @@ permissions:
     children:
       calendar.open: true
       calendar.reload: true
-      calendar.appointment.add: true
+      calendar.appointment.*: true
+  calendar.appointment.*:
+   description: Gives access to all Calendar appointment commands.
+   children:
+     calendar.appointment.add: true
+     calendar.appointment.remove: true
+     calendar.appointment.restore: true
+  calendar.appointmnet.add:
+    description: Gives access to all Calendar add appointment commands.
+    children:
+      calendar.appointment.add.private: true
+      calendar.appointment.add.public: true
+  calendar.appoinmtnet.remove:
+    description: Gives access to all Calendar remove appointment commands.
+    children:
+      calendar.appoinmtnet.remove.private: true
+      calendar.appointment.remove.public: true
+  calendar.appointment.restore:
+    description: Gives access to all Calendar restore appointment commands.
+    children:
+      calendar.appointment.restore.private: true
+      calendar.appointment.restore.public: true 

@@ -23,19 +23,30 @@ public class CommandConfig extends Config implements ConfigUtils {
 	}
 	
 	public HashMap<CommandErrors, String> getErrors() {	
-		
 		HashMap<CommandErrors, String> errors = new HashMap<CommandErrors, String>();
-		
 		String path = "Errors.";
 		
-		errors.put(CommandErrors.noPermissions, main.tag + getString(path + "noPermissions"));
-		errors.put(CommandErrors.notPlayer, main.tag + getString(path + 	"notPlayer"));
-		errors.put(CommandErrors.unkownCommand, main.tag + getString(path + "unknownCommand"));
-		errors.put(CommandErrors.notEnoughArgs, main.tag + getString(path + "notEnoughArgs"));
+		errors.put(CommandErrors.noPermissions, 			getCommandString(path + "noPermissions"));
+		errors.put(CommandErrors.notPlayer, 				getCommandString(path + 	"notPlayer"));
+		errors.put(CommandErrors.unkownCommand, 			getCommandString(path + "unknownCommand"));
 		
-		errors.put(CommandErrors.appointmentAlreadyExists, main.tag + getString(path + "appointmentAlreadyExsists"));
+		errors.put(CommandErrors.appointmentAlreadyExists, 	getCommandString(path + "appointmentAlreadyExsists"));
+		errors.put(CommandErrors.appointmentNotExists, 		getCommandString(path + "appointmentNotExsists"));
 		
 		return errors;
+	}
+	
+	public HashMap<CommandNotifications, String> getNotifications() {
+		HashMap<CommandNotifications, String> notifications = new HashMap<CommandNotifications, String>();
+		String path = "Notifications.";
+		
+		notifications.put(CommandNotifications.configsReloaded, 	getCommandString(path + "configsReloaded"));
+		
+		notifications.put(CommandNotifications.appointmentAdded, 	getCommandString(path + "appointmentAdded"));
+		notifications.put(CommandNotifications.appointmentRemoved, 	getCommandString(path + "appointmentRemoved"));
+		notifications.put(CommandNotifications.appointmentRestored, getCommandString(path + "appointmentRestored"));
+		
+		return notifications;
 	}
 	
 	public FileConfiguration reloadConfig() {
@@ -48,6 +59,10 @@ public class CommandConfig extends Config implements ConfigUtils {
 	@Override
 	public String getString(String path) {
 		return ChatColor.translateAlternateColorCodes('&', config.getString(path));
+	}
+	
+	public String getCommandString(String path) {
+		return main.tag + getString(path);
 	}
 	
 	/*

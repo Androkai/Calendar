@@ -112,7 +112,7 @@ public class Config {
 			try {
 				
 				config.load(file);
-				main.instance.getLogger().info("Succsessfully loaded " + file.getName() + "!");
+				main.instance.getLogger().info("Successfully loaded " + file.getName() + "!");
 				
 			} catch (IOException | InvalidConfigurationException e) {
 				main.instance.getLogger().warning("Error while loading " + file.getName() + "!");

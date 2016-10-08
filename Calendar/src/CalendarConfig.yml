@@ -24,11 +24,18 @@
 #   'amount:' The amount can also be a placeholder.
 #   'lore:' if you remove this parameter there will be no lore displayed. You can also add it again.(Don't leave it there with no value it will cause errors)
 # 
+# TimeZone:
+# To find your time zone you can use this list: https://garygregory.wordpress.com/2013/06/18/what-are-the-java-timezone-ids/
+# 
+# Local:
+# To find your locale use this list: http://www.oracle.com/technetwork/java/javase/javase7locales-334809.html
+# 
+timeZone: 458
+locale: 'en_GB'
 title: '%dayName%, %day%. %monthName% %year%'
 size: 9
 items:
   today:
-    toggle: true
     name: '&2%day%'
     material: STAINED_GLASS_PANE
     id: 5
@@ -36,7 +43,6 @@ items:
     lore:
     - '&r%dayName%'
   day:
-    toggle: true
     name: '&2%day%'
     material: STAINED_GLASS_PANE
     id: 0
@@ -44,7 +50,6 @@ items:
     lore:
     - '&r%dayName%'
   week:
-    toggle: true
     name: '&3Week %week%'
     material: STAINED_GLASS_PANE
     id: 7

@@ -9,13 +9,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import calendar.backend.configs.AppointmentConfig;
 import calendar.backend.date.DateUtils;
+import calendar.backend.item.ItemUtils;
 import calendar.frontend.configs.CalendarConfig;
 import calendar.frontend.configs.CommandConfig;
 import calendar.frontend.gui.Storage;
 import calendar.frontend.gui.StorageUtils;
 import calendar.frontend.listener.command.CommandCaller;
 import calendar.frontend.listener.inventory.InventoryCaller;
-
 public class main extends JavaPlugin {
 	
 	public static String tag = "[§6§lCalendar§r] ";
@@ -30,6 +30,7 @@ public class main extends JavaPlugin {
 	
 	private static DateUtils dateUtils;
 	private static StorageUtils storageUtils;
+	private static ItemUtils itemUtils;
 	
 	/*
 	 * (non-Javadoc)
@@ -62,6 +63,7 @@ public class main extends JavaPlugin {
 		
 		dateUtils = new DateUtils();
 		storageUtils = new StorageUtils();
+		itemUtils = new ItemUtils();
 	}
 	
 	/*
@@ -106,6 +108,10 @@ public class main extends JavaPlugin {
 	
 	public static StorageUtils getStorageUtils() {
 		return storageUtils;
+	}
+	
+	public static ItemUtils getItemUtils() {
+		return itemUtils;
 	}
 
 }

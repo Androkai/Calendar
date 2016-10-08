@@ -3,12 +3,16 @@ package calendar.frontend.gui;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.ZoneId;
 import java.time.format.TextStyle;
+import java.time.temporal.TemporalAccessor;
+import java.time.temporal.TemporalField;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -29,8 +33,9 @@ import calendar.backend.date.DateUtils;
 import calendar.backend.item.EnchantmentProperties;
 import calendar.backend.item.ItemCreator;
 import calendar.backend.item.ItemProperties;
+import calendar.backend.item.ItemUtils;
 import calendar.backend.item.Items;
-import calendar.backend.item.AppointmentLoreProperties;
+import calendar.backend.item.LoreProperties;
 import calendar.backend.main.main;
 import calendar.frontend.configs.CalendarConfig;
 import net.minecraft.server.v1_10_R1.Item;
@@ -41,6 +46,7 @@ public class Calendar {
 	AppointmentConfig appointmentConfig = main.getAppointmentConfig();
 	
 	DateUtils dateUtils = main.getDateUtils();
+	ItemUtils itemUtils = main.getItemUtils();
 	
 	
 	Date date;
@@ -269,14 +275,75 @@ public class Calendar {
 		item.setItemMeta(meta);
 		
 		
-		/*
-		 * Checks if the item is toggled, if so it returns the item, if not it return null.
-		 */
-		if((boolean) itemProperties.get(ItemProperties.TOGGLE)){
-			return item;
-		}else{
-			return null;
+		return item;
+	}
+	
+	/*
+	 * Method to add an appointment to an item.
+	 */
+	private ItemStack addAppointmentPropertiesToItem(Appointment appointment, HashMap<ItemProperties, Object> appointmentProperties, ItemStack item) {
+		ItemMeta meta = item.getItemMeta();
+		
+			if(!appointment.isDeleted()) {
+				
+				String name = (String) appointmentProperties.get(ItemProperties.NAME);
+					if(name != null) {
+						name = this.replacePlaceholder(name, date, timeSystem);
+						item = itemUtils.changeName(item, name);
+					}
+					
+				HashMap<LoreProperties, Object> loreProperties = (HashMap<LoreProperties, Object>) appointmentProperties.get(ItemProperties.LORE);
+				List<String> lore = meta.getLore();
+					if(loreProperties.get(LoreProperties.lore) != null){
+						lore = new ArrayList<String>((List<String>) loreProperties.get(LoreProperties.lore));
+							item = itemUtils.changeLore(item, lore);
+					}
+				
+				Material material = (Material) appointmentProperties.get(ItemProperties.MATERIAL);
+					item = itemUtils.changeMaterial(item, material);
+				 
+				int id = (int) appointmentProperties.get(ItemProperties.ID);
+					item = itemUtils.changeId(item, (short) id);
+					
+				String amount = (String) appointmentProperties.get(ItemProperties.AMOUNT);
+					if(amount != null) {
+						amount = this.replacePlaceholder(amount, date, timeSystem);
+						item = itemUtils.changeAmount(item, Integer.valueOf(amount));
+					}
+					
+				String prefix;
+					prefix = (String) loreProperties.get(LoreProperties.headerPrefix);
+					String header = appointment.getHeader();
+						if(prefix != null) {
+							header = conact(prefix, header);
+						}
+								header = replacePlaceholder(header, date, timeSystem);
+								lore.add(header);			
+			
+					prefix = (String) loreProperties.get(LoreProperties.descriptionPrefix);
+					List<String> description = appointment.getDescription();
+						for(String line : description) {
+							if(prefix != null) {
+								line = conact(prefix, line);
+							}
+									line = replacePlaceholder(line, date, timeSystem);
+									lore.add(line);
+						}
+				
+				HashMap<EnchantmentProperties, Object> enchantment = (HashMap<EnchantmentProperties, Object>) appointmentProperties.get(ItemProperties.ENCHANTMENT);
+					if((boolean) enchantment.get(EnchantmentProperties.TOGGLE)){
+						meta.addEnchant(
+								Enchantment.getByName((String) enchantment.get(EnchantmentProperties.TYPE)), 
+								(int) enchantment.get(EnchantmentProperties.STRENGTH), 
+								(boolean) enchantment.get(EnchantmentProperties.IGNOREMAX));
+						meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+					}
+			
+			meta.setLore(lore);
+			item.setItemMeta(meta);
 		}
+			
+		return item;
 	}
 	
 	/*
@@ -291,50 +358,6 @@ public class Calendar {
 		for(Appointment appointment : appointmentConfig.getAppointmentsFromDate(creator, date)) {
 			item = addAppointmentPropertiesToItem(appointment, calendarItems.get(Items.APPOINTMENT), item);
 		}
-		return item;
-	}
-	
-	/*
-	 * Method to add an appointment to an item.
-	 */
-	private ItemStack addAppointmentPropertiesToItem(Appointment appointment, HashMap<ItemProperties, Object> appointmentProperties, ItemStack item) {
-		ItemMeta meta = item.getItemMeta();
-			
-			HashMap<AppointmentLoreProperties, String> loreProperties = (HashMap<AppointmentLoreProperties, String>) appointmentProperties.get(ItemProperties.LORE);
-			
-			String prefix;
-			List<String> lore = meta.getLore();
-			
-			prefix = loreProperties.get(AppointmentLoreProperties.HeaderPrefix);
-			String header = appointment.getHeader();
-			
-			header = conact(prefix, header);
-			header = replacePlaceholder(header, date, timeSystem);
-			lore.add(header);
-			
-			
-			prefix = loreProperties.get(AppointmentLoreProperties.DescriptionPrefix);
-			List<String> description = appointment.getDescription();
-			
-				for(String line : description) {
-					line = conact(prefix, line);
-					line = replacePlaceholder(line, date, timeSystem);
-					lore.add(line);
-				}
-				
-			HashMap<EnchantmentProperties, Object> enchantment = (HashMap<EnchantmentProperties, Object>) appointmentProperties.get(ItemProperties.ENCHANTMENT);
-			
-			if((boolean) enchantment.get(EnchantmentProperties.TOGGLE)){
-				meta.addEnchant(
-					Enchantment.getByName((String) enchantment.get(EnchantmentProperties.TYPE)), 
-					(int) enchantment.get(EnchantmentProperties.STRENGTH), 
-					(boolean) enchantment.get(EnchantmentProperties.IGNOREMAX));
-				meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-			}
-			
-		meta.setLore(lore);
-		item.setItemMeta(meta);
-		
 		return item;
 	}
 	
@@ -361,8 +384,8 @@ public class Calendar {
 	long dayOfWeek = dateUtils.getDayOfWeek(date) + 1;
 	
 	message = message
-			.replaceAll("%dayName%", DayOfWeek.of((int) dayOfWeek).getDisplayName(TextStyle.FULL, Locale.getDefault()))
-			.replaceAll("%monthName%", Month.of((int) date.getMonth()).getDisplayName(TextStyle.FULL, Locale.getDefault()));
+			.replaceAll("%dayName%", DayOfWeek.of((int) dayOfWeek).getDisplayName(TextStyle.FULL, calendarConfig.getLocal()))
+			.replaceAll("%monthName%", Month.of((int) date.getMonth()).getDisplayName(TextStyle.FULL, calendarConfig.getLocal()));
 		
 		return message;
 	}

@@ -1,9 +1,13 @@
 package calendar.frontend.configs;
 
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
+import org.apache.commons.lang.LocaleUtils;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
@@ -13,7 +17,7 @@ import calendar.backend.configs.ConfigUtils;
 import calendar.backend.item.EnchantmentProperties;
 import calendar.backend.item.ItemProperties;
 import calendar.backend.item.Items;
-import calendar.backend.item.AppointmentLoreProperties;
+import calendar.backend.item.LoreProperties;
 import calendar.backend.main.main;
 import calendar.frontend.gui.InventoryProperties;
 import net.md_5.bungee.api.ChatColor;
@@ -94,8 +98,6 @@ public class CalendarConfig extends Config implements ConfigUtils {
 		/*
 		 * Puts all item properties, out of the configuration file, into the 'itemProperties' HashMap.
 		 */
-		item.put(ItemProperties.TOGGLE, getBoolean(path + "toggle"));
-		
 		item.put(ItemProperties.NAME, getString(path + "name"));
 		item.put(ItemProperties.LORE, getListString(path + "lore"));
 		
@@ -113,11 +115,23 @@ public class CalendarConfig extends Config implements ConfigUtils {
 	
 	private HashMap<ItemProperties, Object> getAppointmentProperties(String path) {
 		HashMap<ItemProperties, Object> item = new HashMap<ItemProperties, Object>();
-		
-			item.put(ItemProperties.LORE, getAppointmentName(path + "lore."));
+			
+			item.put(ItemProperties.NAME, getString(path + "name"));
+			item.put(ItemProperties.ID, getInteger(path + "id"));
+			item.put(ItemProperties.AMOUNT, config.getString(path + "amount"));
+			
+			item.put(ItemProperties.LORE, getAppointmentLore(path + "lore."));
 			item.put(ItemProperties.ENCHANTMENT, getEnchantment(path + "enchantment."));
 			
 		return item;
+	}
+	
+	public TimeZone getTimeZone() {
+		return TimeZone.getTimeZone(config.getString("timeZone"));
+	}
+	
+	public Locale getLocal() {
+		return LocaleUtils.toLocale(config.getString("locale"));
 	}
 	
 	/*
@@ -133,7 +147,12 @@ public class CalendarConfig extends Config implements ConfigUtils {
 	 */
 	@Override
 	public String getString(String path) {
-		return ChatColor.translateAlternateColorCodes('&', config.getString(path));
+		String string = config.getString(path);
+			if(string != null) {
+				return ChatColor.translateAlternateColorCodes('&', config.getString(path));
+			}else{
+				return null;
+			}
 	}
 	
 	/*
@@ -217,14 +236,15 @@ public class CalendarConfig extends Config implements ConfigUtils {
 	/*
 	 * Method to get the name properties of an item.
 	 */
-	private HashMap<AppointmentLoreProperties, String> getAppointmentName(String path) {
-		HashMap<AppointmentLoreProperties, String> name = new HashMap<AppointmentLoreProperties, String>();
+	private HashMap<LoreProperties, Object> getAppointmentLore(String path) {
+		HashMap<LoreProperties, Object> lore = new HashMap<LoreProperties, Object>();
 		
 		if(config.contains(path)) {
-			name.put(AppointmentLoreProperties.HeaderPrefix, getString(path + "prefix.header"));
-			name.put(AppointmentLoreProperties.DescriptionPrefix, getString(path + "prefix.description"));
+			lore.put(LoreProperties.lore, getListString(path + "lore"));
+			lore.put(LoreProperties.headerPrefix, getString(path + "prefix.header"));
+			lore.put(LoreProperties.descriptionPrefix, getString(path + "prefix.description"));
 			
-			return name;
+			return lore;
 		}
 			
 		return null;

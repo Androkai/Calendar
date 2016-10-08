@@ -29,19 +29,88 @@ public class AppointmentConfig extends Config implements ConfigUtils {
 		config = super.loadConfig();
 	}
 	
-	public boolean createAppointment(UUID creator, Date date, int number, String header, List<String> description, HashMap<Flags, Boolean> flags) {
-		String path = createAppointmentPath(creator, date, number);
+	/*
+	 * Method to check if the given appointment already exists.
+	 */
+	public boolean isAppointment(Appointment appointment) {
+		String path = createAppointmentPath(appointment.getCreator(), appointment.getDate(), appointment.getName());
+			if(config.isConfigurationSection(path)) {
+				return true;
+			}
 		
-		if(!config.contains(path)) {
-			
-				setHeader(path, header);
-				setDescription(path, description);
-				setFlags(path, flags);
+		return false;
+	}
+	
+	/*
+	 * Method to restore a deleted appointment.
+	 */
+	public boolean restoreAppointment(Appointment appointment) {
+		UUID creator  = appointment.getCreator();
+		Date date	  = appointment.getDate();
+		String name   = appointment.getName();
+		
+		HashMap<Flags, Boolean> flags = appointment.getFlags();
+		
+			if(isAppointment(appointment) && appointment.isDeleted()){
+				String path = createAppointmentPath(creator, date, name);
+					
+					flags.put(Flags.DELETED, false);
+					setFlags(path, flags);
+					appointment.setFlags(flags);
+					
+						super.saveConfig();
+							return true;
+			}
+		
+		return false;
+	}
+	
+	/*
+	 * Method to delete an existing appointment
+	 */
+	public boolean removeAppointment(Appointment appointment) {
+		UUID creator  = appointment.getCreator();
+		Date date	  = appointment.getDate();
+		String name   = appointment.getName();
+		
+		HashMap<Flags, Boolean> flags = appointment.getFlags();
+		
+			if(isAppointment(appointment) && !appointment.isDeleted()){
+				String path = createAppointmentPath(creator, date, name);
+					
+					flags.put(Flags.DELETED, true);
+					setFlags(path, flags);
+					appointment.setFlags(flags);
+					
+						super.saveConfig();
+							return true;
+			}
+		
+		return false;
+	}
+	
+	/*
+	 * Method to create a new appointment.
+	 */
+	public boolean addAppointment(Appointment appointment) {
+		UUID creator  = appointment.getCreator();
+		Date date	  = appointment.getDate();
+		String name   = appointment.getName();
+		
+		String header = appointment.getHeader();
+		List<String> description = appointment.getDescription();
+		HashMap<Flags, Boolean> flags = appointment.getFlags();
+		
+			if(isAppointment(appointment) == false || getAppointment(creator, date, name).isDeleted()) {
+				String path = createAppointmentPath(creator, date, name);
 				
-				super.saveConfig();
-		}else{
-			return false;
-		}
+					setHeader(path, header);
+					setDescription(path, description);
+					setFlags(path, flags);
+					saveConfig();
+			}else{
+				return false;
+			}
 		
 		return true;
 	}
@@ -51,14 +120,14 @@ public class AppointmentConfig extends Config implements ConfigUtils {
 	 */
 	public ArrayList<Appointment> getAppointmentsFromDate(UUID creator, Date date) {
 		ArrayList<Appointment> appointments = new ArrayList<Appointment>();
-		String appointmentListPath = createAppointmentListPath(creator, date);
+		String path = createAppointmentListPath(creator, date);
 		
-		if(config.contains(appointmentListPath)) {
-			Set<String> numbers = config.getConfigurationSection(appointmentListPath).getKeys(false);
+		if(config.contains(path)) {
+			Set<String> names = config.getConfigurationSection(path).getKeys(false);
 			
-			for(String number : numbers) {
+			for(String name : names) {
 			
-				Appointment appointment = getAppointment(creator, date, Integer.valueOf(number));
+				Appointment appointment = getAppointment(creator, date, name);
 				appointments.add(appointment);
 			
 			}
@@ -71,16 +140,16 @@ public class AppointmentConfig extends Config implements ConfigUtils {
 	/*
 	 * Method to get an Appointment out of the config.
 	 */
-	public Appointment getAppointment(UUID creator, Date date, int number) {
-		String appointmentPath = createAppointmentPath(creator, date, number);
+	public Appointment getAppointment(UUID creator, Date date, String name) {
+		String path = createAppointmentPath(creator, date, name);
 		
 		Appointment appointment;
 		
-		String header 					= getHeader(appointmentPath);
-		List<String> description 		= getDescription(appointmentPath);
-		HashMap<Flags, Boolean> flags 	= getFlags(appointmentPath);
+			String header 					= getHeader(path);
+			List<String> description 		= getDescription(path);
+			HashMap<Flags, Boolean> flags 	= getFlags(path);
 		
-		appointment = new Appointment(date, creator, header, description, flags);
+		appointment = new Appointment(creator, date, name, header, description, flags);
 		
 		return appointment;
 	}
@@ -153,7 +222,7 @@ public class AppointmentConfig extends Config implements ConfigUtils {
 	/*
 	 * Method to create an appointment path.
 	 */
-	private String createAppointmentPath(UUID creator, Date date, int number) {
+	private String createAppointmentPath(UUID creator, Date date, String name) {
 		
 		String appointmentPath;
 		
@@ -164,7 +233,7 @@ public class AppointmentConfig extends Config implements ConfigUtils {
 				 + "." +
 				datePath
 				 + "." +
-				number
+				name
 				 + ".";
 		
 		return appointmentPath;
@@ -199,22 +268,6 @@ public class AppointmentConfig extends Config implements ConfigUtils {
 	}
 	
 	/*
-	 * Method to convert a date path into a date Object.
-	 */
-	private Date datePathToDate(String path) {
-		
-		String[] dateUnits = path.split(".");
-		
-		Date date = main.getDateUtils().getNullDate();
-		
-		date.setMonth(Long.valueOf(dateUnits[0]));
-		date.setDay	 (Long.valueOf(dateUnits[1]));
-		date.setMonth(Long.valueOf(dateUnits[2]));
-		
-		return date;
-	}
-	
-	/*
 	 * (non-Javadoc)
 	 * @see calendar.backend.configs.Config#reloadConfig()
 	 */
@@ -227,12 +280,15 @@ public class AppointmentConfig extends Config implements ConfigUtils {
 	 */
 	@Override
 	public String getString(String path) {
-		return ChatColor.translateAlternateColorCodes('&', config.getString(path));
+			if(config.getString(path) != null) {
+				return ChatColor.translateAlternateColorCodes('&', config.getString(path));
+			}
+		return null;
 	}
 	
 	public void setString(String path, String value) {
 		createSection(path);
-	
+		
 		value = value.replaceAll("§", "&");
 		config.set(path, value);
 	}
