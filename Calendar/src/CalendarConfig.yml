@@ -5,16 +5,16 @@
 #     Formatting codes can be used with &[ForamttingCode], here you will find a list with all formatting codes: http://minecraft.gamepedia.com/Formatting_codes
 #     
 #     Placeholders:
-#       - %second%    - displays the current second.
-#       - %minute%    - displays the current minute.
-#       - %hour%      - displays the current hour.
-#       - %day%       - displays the day of the item.
-#       - %week%      - displays the week of the item.
-#       - %month%     - displays the current month.
-#       - %year%      - displays the current year.
+#       - %date_second%    - displays the current second.
+#       - %date_minute%    - displays the current minute.
+#       - %date_hour%      - displays the current hour.
+#       - %date_day%       - displays the day of the item.
+#       - %date_week%      - displays the week of the item.
+#       - %date_month%     - displays the current month.
+#       - %date_year%      - displays the current year.
 #     
-#       - %dayName%   - displays the name of the day.
-#       - %monthName% - displays the current month name.
+#       - %date_day_name%   - displays the name of the day.
+#       - %date_month_name% - displays the current month name.
 # 
 #    A list of all avilable block materials can be found here: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html 
 #  
@@ -32,28 +32,31 @@
 # 
 timeZone: 458
 locale: 'en_GB'
-title: '%dayName%, %day%. %monthName% %year%'
-size: 9
+title: '%date_day_name%, %date_day%. %date_month_name% %date_year%'
+size: 45
 items:
   today:
-    name: '&2%day%'
+    toggle: true
+    name: '&2%date_day%'
     material: STAINED_GLASS_PANE
     id: 5
-    amount: '%day%'
+    amount: '%date_day%'
     lore:
-    - '&r%dayName%'
+    - '&r%date_day_name%'
   day:
-    name: '&2%day%'
+    toggle: true
+    name: '&2%date_day%'
     material: STAINED_GLASS_PANE
     id: 0
-    amount: '%day%'
+    amount: '%date_day%'
     lore:
-    - '&r%dayName%'
+    - '&r%date_day_name%'
   week:
-    name: '&3Week %week%'
+    toggle: true
+    name: '&3Week %date_week%'
     material: STAINED_GLASS_PANE
     id: 7
-    amount: '%week%'
+    amount: '%date_week%'
   appointment:
     lore:
       prefix:
@@ -64,3 +67,17 @@ items:
       type: OXYGEN
       strength: 0
       ignoreMax: true
+  nextMonth:
+    toggle: true
+    name: 'Next Month'
+    slot: 8
+    material: ARROW
+    id: 0
+    amount: 1
+  previousMonth:
+    toggle: true
+    name: 'Previous Month'
+    slot: 17
+    material: ARROW
+    id: 0
+    amount: 1

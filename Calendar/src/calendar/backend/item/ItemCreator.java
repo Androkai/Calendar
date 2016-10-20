@@ -1,14 +1,35 @@
 package calendar.backend.item;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import calendar.backend.date.DateUtils;
+import calendar.backend.main.main;
+
 public class ItemCreator {
 	
 	ItemStack item;
+	
+	public ItemCreator(HashMap<ItemProperties, Object> itemProperties) {
+		
+		String name = (String) itemProperties.get(ItemProperties.NAME);
+		Material material = (Material) itemProperties.get(ItemProperties.MATERIAL);
+		int amount = (int) itemProperties.get(ItemProperties.AMOUNT);
+		int id = (int) itemProperties.get(ItemProperties.ID);
+		List<String> lore = (List<String>) itemProperties.get(ItemProperties.LORE);
+		
+		ItemStack item = new ItemCreator(material, amount, (short) id, name, lore).getItem();
+		
+			ItemMeta meta = item.getItemMeta();
+				meta.setDisplayName(name);
+			item.setItemMeta(meta);
+			
+		this.item = item;
+	}
 	
 	/*
 	 * Creates an ItemStack with the given parameters.

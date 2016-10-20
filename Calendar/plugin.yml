@@ -1,8 +1,9 @@
 name: Calendar
 main: calendar.backend.main.main
-version: 1.2
+version: 1.3
 author: Joshua Wirtz
 website: https://www.spigotmc.org/resources/29122/
+softdepend: [PlaceholderAPI]
 
 commands:
  calendar:

@@ -7,7 +7,7 @@ public enum CommandErrors {
 	noPermissions,
 	notEnoughArgs,
 	
-	appointmentAlreadyExists,
+	appointmentAlreadyExsists,
 	appointmentNotExists,
 
 }

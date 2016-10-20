@@ -15,13 +15,12 @@ public class Appointment {
 	
 	Date date;
 	UUID creator;
+	
 	String name;
+	HashMap<Flags, Boolean> flags = new HashMap<Flags, Boolean>();
 	
 	String header;
 	List<String> description;
-	
-	// Flags
-	HashMap<Flags, Boolean> flags = new HashMap<Flags, Boolean>();
 	
 	public Appointment(UUID creator, Date date, String name,
 					   String header, List<String> description,
@@ -35,6 +34,19 @@ public class Appointment {
 		this.description = description;
 		
 		this.flags = flags;
+		
+	}
+	
+	public Appointment(Appointment appointment) {
+		
+		this.date = appointment.getDate();
+		this.creator = appointment.getCreator();
+		this.name = appointment.getName();
+		
+		this.header = appointment.getHeader();
+		this.description = appointment.getDescription();
+		
+		this.flags = appointment.getFlags();
 		
 	}
 	
@@ -75,12 +87,14 @@ public class Appointment {
 	public String toString() {
 		
 		String format =	
-										   	   		   		  "\n"
-				+ "Date: " 		  + getDate().toString() 	+ "\n"
-				+ "Creator: " 	  +  getCreator()     	 	+ "\n"
-				+ "Header: " 	  + getHeader() 			+ "\n"
-				+ "Description: " + getDescription() 		+ "\n"
-				+ "Flags: "		  + flags.toString()		+ "";
+				  "{"
+				+ creator 			+ ", "
+				+ date.toString() 	+ ", "
+				+ name 				+ ", "
+				+ flags.toString() 	+ ", "
+				+ header 			+ ", "
+				+ description 		+ ""
+				+ "}";
 		
 		return format;
 	}

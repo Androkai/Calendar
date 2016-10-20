@@ -15,6 +15,7 @@ public class ItemUtils {
 				if(name != null) {
 					meta.setDisplayName(name);
 				}
+			item.setItemMeta(meta);
 		}
 			return item;
 	}
@@ -57,6 +58,7 @@ public class ItemUtils {
 				if(lore != null) {
 					meta.setLore(lore);
 				}
+			item.setItemMeta(meta);
 		}
 			return item;
 	}

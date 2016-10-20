@@ -1,5 +1,6 @@
 package calendar.frontend.listener.command;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAccessor;
 import java.util.HashMap;
@@ -10,13 +11,15 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import calendar.backend.date.Date;
+import calendar.backend.date.DateUtils;
 import calendar.backend.main.main;
+import calendar.backend.storage.StorageUtils;
 import calendar.frontend.configs.CalendarConfig;
 import calendar.frontend.configs.CommandConfig;
 import calendar.frontend.configs.CommandErrors;
 import calendar.frontend.configs.CommandNotifications;
 import calendar.frontend.gui.Calendar;
-import calendar.frontend.gui.StorageUtils;
 
 public class CalendarCommand {
 
@@ -41,11 +44,14 @@ public class CalendarCommand {
 					if(player.hasPermission("calendar.open")){
 				
 						// Creates a new calendar instance and saves it with storageCalendar()
-						Calendar calendar = new Calendar(player, LocalDateTime.now(calendarConfig.getTimeZone().toZoneId()));
+						LocalDateTime timeSystem = LocalDateTime.now(calendarConfig.getTimeZone().toZoneId());
+						Date date = new Date(timeSystem);
+						
+						Calendar calendar = new Calendar(player, date);
 						storageUtils.storageCalendar(player, calendar);
 				
 						// Opens the inventory of the calendar for the command executor.
-						player.openInventory(calendar.getCalendarInventory());
+						player.openInventory(calendar.getInventory());
 						
 					}else{
 						player.sendMessage(errors.get(CommandErrors.noPermissions));
@@ -62,9 +68,9 @@ public class CalendarCommand {
 							String web = Calendar.getDescription().getWebsite();
 							
 							sender.sendMessage("");
-							sender.sendMessage("                 " +main.tag + "");
+							sender.sendMessage("                 " + main.tag + "");
 							sender.sendMessage("                 §1§oVersion: §f"+ ver +"");
-							sender.sendMessage("          §2§oAuthor: §6§o"+author+"§f");
+							sender.sendMessage("          §2§oAuthor: §6§o"+ author +"§f");
 							sender.sendMessage("");
 							sender.sendMessage(" §o"+web+"");
 							sender.sendMessage("");
@@ -100,6 +106,7 @@ public class CalendarCommand {
 		main.getCalendarConfig().reloadConfig();
 		main.getCommandConfig().reloadConfig();
 		main.getAppointmentConfig().reloadConfig();
+		main.getAppointmentDataConfig().reloadConfig();
 		
 	}
 	

@@ -5,17 +5,22 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import calendar.backend.configs.AppointmentConfig;
+import calendar.backend.appointments.AppointmentUtils;
+import calendar.backend.configs.AppointmentDataConfig;
 import calendar.backend.date.DateUtils;
 import calendar.backend.item.ItemUtils;
+import calendar.backend.placeholder.Placeholder;
+import calendar.backend.storage.Storage;
+import calendar.backend.storage.StorageUtils;
+import calendar.frontend.configs.AppointmentConfig;
 import calendar.frontend.configs.CalendarConfig;
 import calendar.frontend.configs.CommandConfig;
-import calendar.frontend.gui.Storage;
-import calendar.frontend.gui.StorageUtils;
 import calendar.frontend.listener.command.CommandCaller;
 import calendar.frontend.listener.inventory.InventoryCaller;
+
 public class main extends JavaPlugin {
 	
 	public static String tag = "[§6§lCalendar§r] ";
@@ -26,11 +31,13 @@ public class main extends JavaPlugin {
 	
 	private static CalendarConfig calendarConfig;
 	private static AppointmentConfig appointmentConfig;
+	private static AppointmentDataConfig appointmentDataConfig;
 	private static CommandConfig commandConfig;
 	
 	private static DateUtils dateUtils;
 	private static StorageUtils storageUtils;
 	private static ItemUtils itemUtils;
+	private static AppointmentUtils appointmentUtils;
 	
 	/*
 	 * (non-Javadoc)
@@ -40,6 +47,7 @@ public class main extends JavaPlugin {
 		instance = this;
 		
 		registerObjects();
+		registerPlaceholder();
 		registerEvents();
 		registerCommands();
 	}
@@ -59,11 +67,14 @@ public class main extends JavaPlugin {
 		
 		calendarConfig = new CalendarConfig();
 		appointmentConfig = new AppointmentConfig();
+		appointmentDataConfig = new AppointmentDataConfig();
 		commandConfig = new CommandConfig();
 		
 		dateUtils = new DateUtils();
 		storageUtils = new StorageUtils();
 		itemUtils = new ItemUtils();
+		appointmentUtils = new AppointmentUtils();
+		
 	}
 	
 	/*
@@ -72,7 +83,6 @@ public class main extends JavaPlugin {
 	private void registerEvents() {
 		
 		Bukkit.getPluginManager().registerEvents(new InventoryCaller(), this);
-		
 	}
 	
 	/*
@@ -88,6 +98,17 @@ public class main extends JavaPlugin {
 	}
 	
 	/*
+	 * Method to register the placeholder.
+	 */
+	public void registerPlaceholder() {
+		
+		if(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+			new Placeholder(this).hook();
+		}
+		
+	}
+	
+	/*
 	 * Getters for the Objects
 	 */
 	public static CalendarConfig getCalendarConfig() {
@@ -96,6 +117,10 @@ public class main extends JavaPlugin {
 	
 	public static AppointmentConfig getAppointmentConfig() {
 		return appointmentConfig;
+	}
+	
+	public static AppointmentDataConfig getAppointmentDataConfig() {
+		return appointmentDataConfig;
 	}
 	
 	public static CommandConfig getCommandConfig() {
@@ -112,6 +137,10 @@ public class main extends JavaPlugin {
 	
 	public static ItemUtils getItemUtils() {
 		return itemUtils;
+	}
+	
+	public static AppointmentUtils getAppointmentUtils() {
+		return appointmentUtils;
 	}
 
 }
