@@ -1,0 +1,5 @@
+eclipse.preferences.version=1
+encoding//src/AppointmentConfig.yml=UTF-8
+encoding//src/CalendarConfig.yml=UTF-8
+encoding//src/calendar/backend/configs/AppointmentDataConfig.java=UTF-8
+encoding//src/calendar/frontend/gui/calendar/Calendar.java=UTF-8

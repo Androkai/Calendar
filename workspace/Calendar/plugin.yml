@@ -1,0 +1,49 @@
+name: Calendar
+main: calendar.backend.main.Main
+version: 1.4.8
+author: Joshua Wirtz
+website: https://www.spigotmc.org/resources/29122/
+softdepend: [PlaceholderAPI]
+
+commands:
+ calendar:
+  usage: /calendar
+  description: Calendar function.
+ appointment:
+  usage: /appointment [add/remove] [Date] [Name] [Header] [Description] [Public]
+  description: Calendar appointment function.
+  
+permissions:
+  calendar.*:
+    description: Gives access to all Calendar commands.
+    children:
+      calendar.open: true
+      calendar.reload: true
+      calendar.appointment.*: true
+  calendar.appointment.*:
+   description: Gives access to all Calendar appointment commands.
+   children:
+     calendar.appointment.add: true
+     calendar.appointment.remove: true
+     calendar.appointment.restore: true
+     calendar.appointment.reminder: true
+  calendar.appointmnet.add:
+    description: Gives access to all Calendar add appointment commands.
+    children:
+      calendar.appointment.add.private: true
+      calendar.appointment.add.public: true
+  calendar.appoinmtnet.remove:
+    description: Gives access to all Calendar remove appointment commands.
+    children:
+      calendar.appoinmtnet.remove.private: true
+      calendar.appointment.remove.public: true
+  calendar.appointment.restore:
+    description: Gives access to all Calendar restore appointment commands.
+    children:
+      calendar.appointment.restore.private: true
+      calendar.appointment.restore.public: true 
+  calendar.appointment.reminder:
+    description: Gives access to all Calendar reminder commands.
+    children:
+      calendar.appointment.reminder.enable: true
+      calendar.appointment.reminder.disable: true

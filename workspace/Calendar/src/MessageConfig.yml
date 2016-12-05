@@ -1,0 +1,33 @@
+#       Calendar
+#  Author: Joshua Wirtz
+# 
+# Formatting codes can be used with &[ForamttingCode], here you will find a list with all formatting codes: http://minecraft.gamepedia.com/Formatting_codes
+# 
+prefix: '[&6&lCalendar&r] '
+help:
+  - '<->  &6&lCalendar&r &2&lHELP&r  <->'
+  - '&r- &o/calendar            '
+  - '&r     &aOpens the calendar'
+  - '&r- &o/appointment         '
+  - '&r     -add [status] [date] [name] [header] [description]'
+  - '&r       &aAdds an appointment'
+  - '&r     -remove [status] [date] [name]'                     
+  - '&r       &aRemoves an appointment'
+  - '&r     -restore [status] [date] [name]'                    
+  - '&r       &aRestores an appointment'
+  - '&r     -reminder [disable/enable]'
+  - '&r       &aDisables or enables the reminder'
+errors:
+  unknownCommand: '&cUnknown command! Try &r/calendar help'
+  notPlayer: '&cThis command is not executable in the consol!'
+  noPermissions: '&cYou do not have permissions to do that!'
+  appointmentAlreadyExsists: '&cThis appointment already exsists!'
+  appointmentNotExsists: '&cThis appointment does not exsist!'
+notifications:
+  configsReloaded: '&aConfigs have been reloaded!'
+  appointmentAdded: '&aAppointment added!'
+  appointmentRemoved: '&aAppointment removed!'
+  appointmentRestored: '&aAppointment restored!'
+  reminderEnabled: '&aReminder enabled!'
+  reminderDisabled: '&aReminder disabled!'
+  

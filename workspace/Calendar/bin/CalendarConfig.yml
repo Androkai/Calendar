@@ -1,0 +1,92 @@
+#       Calendar
+#  Author: Joshua Wirtz
+# 
+#     IDs for block color/type ids you can find here: http://minecraft.gamepedia.com/Data_values
+#     Formatting codes can be used with &[ForamttingCode], here you will find a list with all formatting codes: http://minecraft.gamepedia.com/Formatting_codes
+#     
+#     Placeholders:
+#       - %date_second%    - displays the current second.
+#       - %date_minute%    - displays the current minute.
+#       - %date_hour%      - displays the current hour.
+#       - %date_day%       - displays the day of the item.
+#       - %date_week%      - displays the week of the item.
+#       - %date_month%     - displays the current month.
+#       - %date_year%      - displays the current year.
+#     
+#       - %date_day_name%   - displays the name of the day.
+#       - %date_month_name% - displays the current month name.
+# 
+#    A list of all avilable block materials can be found here: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html 
+#  
+# Info:
+#   'size:' will be the minimum size of the inventory.
+#   'toggle:' if you set this to false the item will not be displayed.
+#   'amount:' The amount can also be a placeholder.
+#   'lore:' if you remove this parameter there will be no lore displayed. You can also add it again.(Don't leave it there with no value it will cause errors)
+# 
+# TimeZone:
+# Use 'default' to set the timezone to the systems timezone.
+# To find your time zone you can use this list: https://garygregory.wordpress.com/2013/06/18/what-are-the-java-timezone-ids/
+# 
+# Local:
+# Use 'default' to set the locale to the systems loacle.
+# To find your locale use this list: http://www.oracle.com/technetwork/java/javase/javase7locales-334809.html
+# 
+timeZone: default
+locale: default
+title: '%date_day_name%, %date_day%. %date_month_name% %date_year%'
+size: 54
+items:
+  today:
+    toggle: true
+    name: '&2%date_day%'
+    material: STAINED_GLASS_PANE
+    id: 5
+    amount: '%date_day%'
+    lore:
+    - '&r%date_day_name%'
+  day:
+    toggle: true
+    name: '&2%date_day%'
+    material: STAINED_GLASS_PANE
+    id: 0
+    amount: '%date_day%'
+    lore:
+    - '&r%date_day_name%'
+  week:
+    toggle: true
+    name: '&3Week %date_week%'
+    material: STAINED_GLASS_PANE
+    id: 7
+    amount: '%date_week%'
+  appointment:
+    lore:
+      prefix:
+        header: ' &4▌ &7'
+        description: ' &2▌ &8'
+    enchantment:
+      toggle: true
+      type: OXYGEN
+      strength: 0
+      ignoreMax: true
+  nextMonth:
+    toggle: true
+    name: 'Next Month'
+    slot: 8
+    material: ARROW
+    id: 0
+    amount: 1
+  previousMonth:
+    toggle: true
+    name: 'Previous Month'
+    slot: 17
+    material: ARROW
+    id: 0
+    amount: 1
+  exit:
+    toggle: true
+    name: 'Exit'
+    slot: 53
+    material: BARRIER
+    id: 0
+    amount: 1
