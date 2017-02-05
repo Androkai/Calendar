@@ -5,7 +5,9 @@ public enum AppointmentProperties {
 	DATE,
 	CREATOR,
 	
+	STATUS,
 	NAME,
+	TIME,
 	FLAGS,
 	
 	HEADER,

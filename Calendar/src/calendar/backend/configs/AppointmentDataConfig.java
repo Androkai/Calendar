@@ -1,38 +1,50 @@
 package calendar.backend.configs;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
-
+import calendar.backend.Main;
 import calendar.backend.appointments.Appointment;
 import calendar.backend.appointments.Flags;
-import calendar.backend.date.Date;
-import calendar.backend.main.main;
-import net.md_5.bungee.api.ChatColor;
+import calendar.backend.dateTime.Date;
+import calendar.backend.dateTime.DateTime;
+import calendar.backend.dateTime.Time;
 
 public class AppointmentDataConfig extends Config {
 	
 	
 	public AppointmentDataConfig() {
-		super(main.instance.getDataFolder(), "Data.yml");
+		super(Main.instance.getDataFolder(), "Data.yml");
 		
 		config = super.loadConfig();
+	}
+	
+	public void collectTrash(Date removeAfter) {
+		ConfigurationSection creatorSection = config.getConfigurationSection("");
+		
+			for(String creatorPath : creatorSection.getKeys(false)) {
+				ConfigurationSection dateSection = config.getConfigurationSection(creatorPath);
+					for(String datePath : dateSection.getKeys(false)) {
+						Date date = datePathToDate(datePath);
+							if(date.isBefore(removeAfter)) {
+								String path = creatorPath + "." + datePath;
+									config.set(path, null);
+									saveConfig();
+							}
+					}
+			}
+		
 	}
 	
 	/*
 	 * Method to check if the given appointment already exists.
 	 */
 	public boolean isAppointment(Appointment appointment) {
-		String path = createAppointmentPath(appointment.getCreator(), appointment.getDate(), appointment.getName());
+		String path = createAppointmentPath(appointment.getCreator(), appointment.getDateTime().getDate(), appointment.getName());
 			if(config.isConfigurationSection(path)) {
 				return true;
 			}
@@ -43,9 +55,9 @@ public class AppointmentDataConfig extends Config {
 	/*
 	 * Method to restore a deleted appointment.
 	 */
-	public boolean restoreAppointment(Appointment appointment) {
+	public void restoreAppointment(Appointment appointment) {
 		UUID creator  = appointment.getCreator();
-		Date date	  = appointment.getDate();
+		Date date 	  = appointment.getDateTime().getDate();
 		String name   = appointment.getName();
 		
 		HashMap<Flags, Boolean> flags = appointment.getFlags();
@@ -58,18 +70,16 @@ public class AppointmentDataConfig extends Config {
 					appointment.setFlags(flags);
 					
 						super.saveConfig();
-							return true;
 			}
 		
-		return false;
 	}
 	
 	/*
 	 * Method to delete an existing appointment
 	 */
-	public boolean removeAppointment(Appointment appointment) {
+	public void removeAppointment(Appointment appointment) {
 		UUID creator  = appointment.getCreator();
-		Date date	  = appointment.getDate();
+		Date date = appointment.getDateTime().getDate();
 		String name   = appointment.getName();
 		
 		HashMap<Flags, Boolean> flags = appointment.getFlags();
@@ -82,29 +92,27 @@ public class AppointmentDataConfig extends Config {
 					appointment.setFlags(flags);
 					
 						super.saveConfig();
-							return true;
 			}
 		
-		return false;
 	}
 	
 	/*
 	 * Method to edit an appointment.
 	 */
-	public boolean editAppointment(Appointment appointment) {
+	public void editAppointment(Appointment appointment) {
 		UUID creator  = appointment.getCreator();
-		Date date	  = appointment.getDate();
+		DateTime date	  = appointment.getDateTime();
 		String name   = appointment.getName();
 		
-		return false;
 	}
 	
 	/*
 	 * Method to create an new appointment.
 	 */
-	public boolean addAppointment(Appointment appointment) {
+	public void addAppointment(Appointment appointment) {
 		UUID creator  = appointment.getCreator();
-		Date date	  = appointment.getDate();
+		Date date     = appointment.getDateTime().getDate();
+		Time time 	  = appointment.getDateTime().getTime();
 		String name   = appointment.getName();
 		
 		String header = appointment.getHeader();
@@ -114,15 +122,12 @@ public class AppointmentDataConfig extends Config {
 			if(isAppointment(appointment) == false || getAppointment(creator, date, name).isDeleted()) {
 				String path = createAppointmentPath(creator, date, name);
 				
+					setTime(path, time);
 					setHeader(path, header);
 					setDescription(path, description);
 					setFlags(path, flags);
 					saveConfig();
-			}else{
-				return false;
 			}
-		
-		return true;
 	}
 	
 	/*
@@ -152,15 +157,16 @@ public class AppointmentDataConfig extends Config {
 	 */
 	public Appointment getAppointment(UUID creator, Date date, String name) {
 		String path = createAppointmentPath(creator, date, name);
-		
-		Appointment appointment;
-		
-			String header 					= getHeader(path);
-			List<String> description 		= getDescription(path);
-			HashMap<Flags, Boolean> flags 	= getFlags(path);
-		
-		appointment = new Appointment(creator, date, name, header, description, flags);
-		
+		Appointment appointment = new Appointment(creator, new DateTime(date, new Time()));
+			
+			if(config.contains(path)) {
+				Time time						= getTime(path);
+				String header 					= getHeader(path);
+				List<String> description 		= getDescription(path);
+				HashMap<Flags, Boolean> flags 	= getFlags(path);
+				appointment = new Appointment(creator, new DateTime(date, time), name, header, description, flags);
+			}
+			
 		return appointment;
 	}
 	
@@ -229,6 +235,25 @@ public class AppointmentDataConfig extends Config {
 			setBoolean(path + "deleted", isDeleted);
 	}
 	
+	private Time getTime(String path) {
+		path = path + "time";
+		Time time = new Time();
+		
+			String[] timeUnits = getString(path).split(":");
+	 		time.setHour(Long.valueOf(timeUnits[0]));
+	 		time.setMinute(Long.valueOf(timeUnits[1]));
+	 		time.setSecond(Long.valueOf(timeUnits[2]));
+	 		
+		return time;
+	}
+	
+	private void setTime(String path, Time date) {
+		path = path + "time";
+		
+			String timeString = date.getHour() + ":" + date.getMinute() + ":" + date.getSecond();
+			setString(path, timeString);
+	}
+	
 	/*
 	 * Method to create an appointment path.
 	 */
@@ -276,5 +301,20 @@ public class AppointmentDataConfig extends Config {
 		
 		return path;
 	}
+	
+	/*
+	 * Method to convert a date path into a date Object.
+	 */
+	 private Date datePathToDate(String path) {
+	 	String[] dateUnits = path.split("_");
+	 		
+	 		Date date = new Date();
+	 		
+	 		date.setMonth(Long.valueOf(dateUnits[0]));
+	 		date.setDay	 (Long.valueOf(dateUnits[1]));
+	 		date.setYear(Long.valueOf(dateUnits[2]));
+	 	
+	 		return date;
+	  }
 
 }

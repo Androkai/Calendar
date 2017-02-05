@@ -4,16 +4,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.UnaryOperator;
-
 import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import calendar.backend.Main;
 import calendar.backend.item.EnchantmentProperties;
 import calendar.backend.item.ItemProperties;
-import calendar.backend.main.main;
 import net.md_5.bungee.api.ChatColor;
 
 public class Config {
@@ -48,7 +46,7 @@ public class Config {
 	
 	
 	// Saves the configuration of the current 'config' variable.
-	protected void saveConfig() {
+	public void saveConfig() {
 		
 		/*
 		 * Tries to save the configuration in the given file 'configFile'.
@@ -58,6 +56,11 @@ public class Config {
 		} catch (IOException exeption) {
 			exeption.printStackTrace();
 		}
+	}
+	
+	// Method to get the size of the config file in bytes.
+	public long getByteSize() {
+		return file.length();
 	}
 	
 	
@@ -74,7 +77,7 @@ public class Config {
 
 	
 	// Deletes the current configuration File.
-	protected void delteConfig() {
+	public void deleteConfig() {
 		
 		/*
 		 * Checks if the File exists.
@@ -95,7 +98,7 @@ public class Config {
 		 */
 		if(!file.exists()){
 			file.getParentFile().mkdirs();
-			main.instance.saveResource(file.getName(), false);
+			Main.instance.saveResource(file.getName(), false);
 		}
 	
 		// Creates the new YamlConfiguration 'config', which will be our new Config.
@@ -105,10 +108,10 @@ public class Config {
 			try {
 				
 				config.load(file);
-				main.instance.getLogger().info("Successfully loaded " + file.getName() + "!");
+				Main.instance.getLogger().info("Successfully loaded " + file.getName() + "!");
 				
 			} catch (IOException | InvalidConfigurationException e) {
-				main.instance.getLogger().warning("Error while loading " + file.getName() + "!");
+				Main.instance.getLogger().warning("Error while loading " + file.getName() + "!");
 				e.printStackTrace();
 			}
 			
@@ -137,8 +140,10 @@ public class Config {
 	}
 	protected void setFormatString(String path, String arg) {
 		createSection(path);
-			arg = arg.replaceAll("§", "&");
-				config.set(path, arg);
+			if(arg != null) {
+				arg = arg.replaceAll("§", "&");
+			}
+					config.set(path, arg);
 	}
 	
 	protected int getInteger(String path) {
@@ -188,10 +193,12 @@ public class Config {
 	}
 	protected void setListFormatString(String path, List<String> arg) {
 		createSection(path);
-			for(String line : arg) {
-				arg.set(arg.indexOf(line), line.replaceAll("§", "&"));
+			if(arg != null) {
+				for(String line : arg) {
+					arg.set(arg.indexOf(line), line.replaceAll("§", "&"));
+				}
 			}
-				config.set(path, arg);
+						config.set(path, arg);
 	}
 	
 	protected Material getMaterial(String path) {
@@ -209,7 +216,7 @@ public class Config {
 		HashMap<EnchantmentProperties, Object> enchantmentProperties = new HashMap<EnchantmentProperties, Object>();
 		
 			if(config.contains(path)) {
-				enchantmentProperties.put(EnchantmentProperties.STRENGTH, getInteger(path + "strenght"));
+				enchantmentProperties.put(EnchantmentProperties.STRENGTH, getInteger(path + "strength"));
 				enchantmentProperties.put(EnchantmentProperties.TYPE, getString(path + "type"));
 			
 				enchantmentProperties.put(EnchantmentProperties.IGNOREMAX, getBoolean(path + "ignoremax"));

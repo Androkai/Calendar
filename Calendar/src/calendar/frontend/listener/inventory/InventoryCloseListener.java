@@ -4,12 +4,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 
-import calendar.backend.main.main;
+import calendar.backend.Main;
 import calendar.backend.storage.Storage;
-import calendar.frontend.gui.AppointmentAdd;
-import calendar.frontend.gui.AppointmentManager;
-import calendar.frontend.gui.AppointmentRemove;
-import calendar.frontend.gui.Calendar;
+import calendar.frontend.gui.appointment.AppointmentAdd;
+import calendar.frontend.gui.appointment.AppointmentManager;
+import calendar.frontend.gui.appointment.AppointmentRemove;
+import calendar.frontend.gui.appointment.AppointmentTrash;
+import calendar.frontend.gui.calendar.Calendar;
 public class InventoryCloseListener {
 	
 	public InventoryCloseListener(InventoryCloseEvent event){
@@ -18,7 +19,7 @@ public class InventoryCloseListener {
 		
 		if(event.getPlayer() instanceof Player){
 			Player player = (Player) event.getPlayer();
-			Storage storage = main.storages.get(player);
+			Storage storage = Main.storages.get(player);
 			
 			/*
 			 * Checks if the Storage of the player isn't null, to prevent NullPointerExeptions.
@@ -42,7 +43,9 @@ public class InventoryCloseListener {
 				AppointmentAdd appointmentAdd = storage.getAppointmentAdd();
 				if(appointmentAdd != null) {
 					if(inventory.equals(appointmentAdd.getInventory())) {
-						storage.setAppointmentAdd(null);
+						if(storage.getInputParameter() == null) {
+							storage.setAppointmentAdd(null);
+						}
 					}
 				}
 				
@@ -53,11 +56,17 @@ public class InventoryCloseListener {
 					}
 				}
 				
+				AppointmentTrash appointmentTrash = storage.getAppointmentTrash();
+				if(appointmentTrash != null) {
+					if(inventory.equals(appointmentTrash.getInventory())) {
+						storage.setAppointmentTrash(null);
+					}
+				}
 				
 				if(storage.allNull()){
-					main.storages.remove(player);
+					Main.storages.remove(player);
 				}else{
-					main.storages.put(player, storage);
+					Main.storages.put(player, storage);
 				}
 			}
 			

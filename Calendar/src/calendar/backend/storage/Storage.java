@@ -1,27 +1,26 @@
 package calendar.backend.storage;
 
-import java.time.LocalDate;
-import java.util.HashMap;
-
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-
-import calendar.backend.date.Date;
-import calendar.backend.item.Items;
-import calendar.frontend.gui.AppointmentAdd;
-import calendar.frontend.gui.AppointmentManager;
-import calendar.frontend.gui.AppointmentRemove;
-import calendar.frontend.gui.Calendar;
+import calendar.backend.appointments.AppointmentProperties;
+import calendar.backend.dateTime.DateTime;
+import calendar.frontend.gui.appointment.AppointmentAdd;
+import calendar.frontend.gui.appointment.AppointmentManager;
+import calendar.frontend.gui.appointment.AppointmentRemove;
+import calendar.frontend.gui.appointment.AppointmentTrash;
+import calendar.frontend.gui.calendar.Calendar;
 
 public class Storage {
 	
 	Player holder;
 	
 	Calendar calendar;
-	
 	AppointmentManager appointmentManager;
 	AppointmentAdd appointmentAdd;
 	AppointmentRemove appointmentRemove;
+	AppointmentTrash appointmentTrash;
+	
+	DateTime calendarDateTime;
+	AppointmentProperties inputParameter;
 	
 
 	public Player getHolder() {
@@ -59,13 +58,35 @@ public class Storage {
 		this.appointmentRemove = appointmentRemove;
 	}
 	
+	public AppointmentTrash getAppointmentTrash() {
+		return this.appointmentTrash;
+	}
+	public void setAppointmentTrash(AppointmentTrash appointmentTrash) {
+		this.appointmentTrash = appointmentTrash;
+	}
+	
+	public DateTime getCalendarDateTime() {
+		return calendarDateTime;
+	}
+	public void setCalendarDateTime(DateTime calendarDateTime) {
+		this.calendarDateTime = calendarDateTime;
+	}
+	
+	public AppointmentProperties getInputParameter() {
+		return inputParameter;
+	}
+	public void setInputParameter(AppointmentProperties parameter) {
+		inputParameter = parameter;
+	}
 	
 	public boolean allNull() {
 		return 	   
 			calendar 			== null
 		&&  appointmentManager 	== null
 		&&  appointmentAdd 		== null
-		&&  appointmentRemove	== null;
+		&&  appointmentRemove	== null
+		&&  appointmentTrash    == null
+		&&	inputParameter		== null;
 	}
 
 }

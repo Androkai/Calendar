@@ -3,18 +3,18 @@ package calendar.backend.appointments;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import calendar.backend.date.Date;
-import calendar.backend.date.DateUtils;
-import calendar.backend.main.main;
+import calendar.backend.Main;
+import calendar.backend.dateTime.DateTime;
+import calendar.backend.dateTime.DateTimeUtils;
 
 public class AppointmentUtils {
 
-	private DateUtils dateUtils = main.getDateUtils();
+	private DateTimeUtils dateTimeUtils = Main.getDateTimeUtils();
 	
 	public HashMap<AppointmentProperties, Object> toHashMap(Appointment appointment) {
 		HashMap<AppointmentProperties, Object> appointmentMap = new HashMap<AppointmentProperties, Object>();
 		
-			appointmentMap.put(AppointmentProperties.DATE, appointment.getDate());
+			appointmentMap.put(AppointmentProperties.DATE, appointment.getDateTime());
 			appointmentMap.put(AppointmentProperties.CREATOR, appointment.getCreator());
 			appointmentMap.put(AppointmentProperties.NAME, appointment.getName());
 			appointmentMap.put(AppointmentProperties.FLAGS, appointment.getFlags());
@@ -39,9 +39,31 @@ public class AppointmentUtils {
 		return appointments;
 	}
 	
+	public ArrayList<Appointment> removeNotDeletedAppointments(ArrayList<Appointment> appointments) {
+		if(appointments != null) {
+			ArrayList<Appointment> notDeletedAppointments = new ArrayList<Appointment>();
+				for(Appointment appointment : appointments) {
+					if(!appointment.isDeleted()) {
+						notDeletedAppointments.add(appointment);
+					}
+				}
+				
+			appointments.removeAll(notDeletedAppointments);
+		}
+		
+		return appointments;
+	}
+	
 	// Method to check if the appointment is on the given date.
-	public boolean isOnDate(Date date, Appointment appointment) {
-		return dateUtils.equalsDay(date, appointment.getDate());
+	public boolean isOnDate(DateTime date, Appointment appointment) {
+		return dateTimeUtils.equalsDay(date, appointment.getDateTime());
 	} 
+	
+	public HashMap<Flags, Boolean> getNullFlags() {
+		HashMap<Flags, Boolean> flags = new HashMap<Flags, Boolean>();
+			flags.put(Flags.DELETED, false);
+			flags.put(Flags.EDITED, false);
+		return flags;
+	}
 	
 }

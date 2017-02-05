@@ -1,7 +1,5 @@
 package calendar.backend.placeholder;
 
-import java.text.Normalizer.Form;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -11,16 +9,16 @@ import java.util.Locale;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import calendar.backend.date.Date;
-import calendar.backend.date.DateUtils;
-import calendar.backend.main.main;
-import calendar.frontend.configs.CalendarConfig;
+import calendar.backend.Main;
+import calendar.backend.configs.CalendarConfig;
+import calendar.backend.dateTime.DateTime;
+import calendar.backend.dateTime.DateTimeUtils;
 import me.clip.placeholderapi.external.EZPlaceholderHook;
 
 public class Placeholder extends EZPlaceholderHook {
 	
-	DateUtils dateUtils = main.getDateUtils();
-	CalendarConfig calendarConfig = main.getCalendarConfig();
+	DateTimeUtils dateTimeUtils = Main.getDateTimeUtils();
+	CalendarConfig calendarConfig = Main.getCalendarConfig();
 	
 	Plugin plugin;
     
@@ -34,7 +32,7 @@ public class Placeholder extends EZPlaceholderHook {
     	if (player != null) {
     			Locale locale = calendarConfig.getLocal();
     			LocalDateTime timeSystem = LocalDateTime.now();
-    			Date date = new Date(timeSystem);
+    			DateTime date = new DateTime(timeSystem);
     			DateTimeFormatter formatter = new DateTimeFormatterBuilder().toFormatter(locale);
     			
         		if(identifier.equals("date_second")) {
@@ -46,6 +44,10 @@ public class Placeholder extends EZPlaceholderHook {
         		}
         		
         		if(identifier.equals("date_hour")) {
+        			return timeSystem.format(formatter.ofPattern("HH"));
+        		}
+        		
+        		if(identifier.equals("date_hour_am_pm")) {
         			return timeSystem.format(formatter.ofPattern("hh"));
         		}
         		

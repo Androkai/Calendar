@@ -5,15 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import org.bukkit.entity.Player;
-
-import calendar.backend.date.Date;
-import calendar.backend.date.DateUtils;
-import calendar.backend.main.main;
+import calendar.backend.Main;
+import calendar.backend.dateTime.DateTime;
 
 public class Appointment {
 	
-	Date date;
+	DateTime dateTime;
 	UUID creator;
 	
 	String name;
@@ -22,11 +19,11 @@ public class Appointment {
 	String header;
 	List<String> description;
 	
-	public Appointment(UUID creator, Date date, String name,
+	public Appointment(UUID creator, DateTime dateTime, String name,
 					   String header, List<String> description,
 					   HashMap<Flags, Boolean> flags) {
 		
-		this.date = date;
+		this.dateTime = dateTime;
 		this.creator = creator;
 		this.name = name;
 		
@@ -37,36 +34,60 @@ public class Appointment {
 		
 	}
 	
-	public Appointment(Appointment appointment) {
-		
-		this.date = appointment.getDate();
-		this.creator = appointment.getCreator();
-		this.name = appointment.getName();
-		
-		this.header = appointment.getHeader();
-		this.description = appointment.getDescription();
-		
-		this.flags = appointment.getFlags();
-		
+	public Appointment(UUID creator, DateTime dateTime) {
+		this(creator, dateTime, null, null, new ArrayList<String>(), Main.getAppointmentUtils().getNullFlags());
 	}
 	
-	public Date getDate() {
-		return date;
+	public Appointment(Appointment appointment) {
+		this(appointment.getCreator(), appointment.getDateTime(), appointment.getName(), appointment.getHeader(), appointment.getDescription(), appointment.getFlags());
+	}
+	
+	// Method to output an Appointment
+	public String toString() {
+		return
+				  "{"
+				+ creator 				+ ", "
+				+ dateTime.toString() 	+ ", "
+				+ name 					+ ", "
+				+ flags.toString() 		+ ", "
+				+ header 				+ ", "
+				+ description 			+ ""
+				+ "}";
+	}
+	
+	public DateTime getDateTime() {
+		return dateTime;
+	}
+	public void setDateTime(DateTime date) {
+		this.dateTime = date;
 	}
 	
 	public UUID getCreator() {
 		return creator;
 	}
+	public void setCreator(UUID creator) {
+		this.creator = creator;
+	}
 	
 	public String getName() {
 		return name;
+	}
+	public void setName(String name) {
+		this.name =name;
 	}
 	
 	public String getHeader() {
 		return header;
 	}
+	public void setHeader(String header) {
+		this.header = header;
+	}
+	
 	public List<String> getDescription() {
 		return description;
+	}
+	public void setDescription(List<String> description) {
+		this.description = description;
 	}
 	
 	public HashMap<Flags, Boolean> getFlags() {
@@ -81,22 +102,6 @@ public class Appointment {
 		boolean isDeleted = flags.get(Flags.DELETED);
 		
 		return isDeleted;
-	}
-	
-	// Method to output an Appointment
-	public String toString() {
-		
-		String format =	
-				  "{"
-				+ creator 			+ ", "
-				+ date.toString() 	+ ", "
-				+ name 				+ ", "
-				+ flags.toString() 	+ ", "
-				+ header 			+ ", "
-				+ description 		+ ""
-				+ "}";
-		
-		return format;
 	}
 
 }

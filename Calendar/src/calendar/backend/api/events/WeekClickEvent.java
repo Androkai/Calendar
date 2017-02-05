@@ -1,6 +1,5 @@
 package calendar.backend.api.events;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.bukkit.entity.Player;
@@ -9,9 +8,9 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 
-import calendar.backend.date.Date;
+import calendar.backend.dateTime.DateTime;
 import calendar.backend.item.Items;
-import calendar.frontend.gui.Calendar;
+import calendar.frontend.gui.calendar.Calendar;
 
 public class WeekClickEvent extends Event implements Cancellable {
 
@@ -19,7 +18,7 @@ public class WeekClickEvent extends Event implements Cancellable {
 	boolean cancelled;
     
 	ItemStack item;
-	Date date;
+	DateTime date;
 	
 	Player player;
 	Calendar calendar;
@@ -58,10 +57,10 @@ public class WeekClickEvent extends Event implements Cancellable {
 	/*
 	 * Method to get the day it Player clicked.
 	 */
-	private Date getClickedDate(ItemStack item, Calendar calendar) {
+	private DateTime getClickedDate(ItemStack item, Calendar calendar) {
 		@SuppressWarnings("unchecked")
-		HashMap<ItemStack, Date> weekItems = (HashMap<ItemStack, Date>) calendar.getItems().get(Items.WEEK);
-		Date date = weekItems.get(item);
+		HashMap<ItemStack, DateTime> weekItems = (HashMap<ItemStack, DateTime>) calendar.getItems().get(Items.WEEK);
+		DateTime date = weekItems.get(item);
 		
 		return date;
 	}

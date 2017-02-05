@@ -1,24 +1,16 @@
 package calendar.backend.api.events;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.AnvilInventory;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import calendar.backend.date.Date;
-import calendar.backend.item.ItemCreator;
+import calendar.backend.dateTime.DateTime;
 import calendar.backend.item.Items;
-import calendar.frontend.gui.AppointmentManager;
-import calendar.frontend.gui.Calendar;
+import calendar.frontend.gui.calendar.Calendar;
 
 public class DayClickEvent extends Event implements Cancellable {
 	
@@ -26,7 +18,7 @@ public class DayClickEvent extends Event implements Cancellable {
 	boolean cancelled;
     
 	ItemStack item;
-	Date date;
+	DateTime date;
 	
 	Player player;
 	Calendar calendar;
@@ -45,7 +37,7 @@ public class DayClickEvent extends Event implements Cancellable {
 		return item;
 	}
 	
-	public Date getClickedDate() {
+	public DateTime getClickedDate() {
 		return date;
 	}
 	
@@ -78,10 +70,10 @@ public class DayClickEvent extends Event implements Cancellable {
 	/*
 	 * Method to get the day it Player clicked.
 	 */
-	private Date getClickedDate(ItemStack item, Calendar calendar) {
+	private DateTime getClickedDate(ItemStack item, Calendar calendar) {
 		@SuppressWarnings("unchecked")
-		HashMap<ItemStack, Date> dayItems = (HashMap<ItemStack, Date>) calendar.getItems().get(Items.DAY);
-		Date date = dayItems.get(item);
+		HashMap<ItemStack, DateTime> dayItems = (HashMap<ItemStack, DateTime>) calendar.getItems().get(Items.DAY);
+		DateTime date = dayItems.get(item);
 		
 		return date;
 	}

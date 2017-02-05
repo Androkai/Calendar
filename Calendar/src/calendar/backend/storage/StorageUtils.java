@@ -4,17 +4,19 @@ import java.util.HashMap;
 
 import org.bukkit.entity.Player;
 
-import calendar.backend.main.main;
-import calendar.frontend.gui.AppointmentAdd;
-import calendar.frontend.gui.AppointmentManager;
-import calendar.frontend.gui.AppointmentRemove;
-import calendar.frontend.gui.Calendar;
+import calendar.backend.Main;
+import calendar.frontend.gui.appointment.AppointmentAdd;
+import calendar.frontend.gui.appointment.AppointmentManager;
+import calendar.frontend.gui.appointment.AppointmentRemove;
+import calendar.frontend.gui.appointment.AppointmentTrash;
+import calendar.frontend.gui.calendar.Calendar;
 
 public class StorageUtils {
 	
 	public void storageCalendar(Player player, Calendar calendar) {
 		Storage storage = getPlayerStorage(player);
 			storage.setCalendar(calendar);
+			storage.setCalendarDateTime(calendar.getDateTime());
 				updateStorageMap(player, storage);
 	}
 	
@@ -36,9 +38,15 @@ public class StorageUtils {
 				updateStorageMap(player, storage);
 	}
 	
+	public void storageAppointmentTrash(Player player, AppointmentTrash appointmentTrash) {
+		Storage storage = getPlayerStorage(player);
+			storage.setAppointmentTrash(appointmentTrash);
+				updateStorageMap(player, storage);
+	}
+	
 	public Storage getPlayerStorage(Player player) {
 		// Gets the map with all storages
-		HashMap<Player, Storage> storages = main.storages;
+		HashMap<Player, Storage> storages = Main.storages;
 		
 		Storage storage;
 		
@@ -64,13 +72,13 @@ public class StorageUtils {
 	
 	public void updateStorageMap(Player player, Storage storage) {
 		// Gets the map with all storages
-		HashMap<Player, Storage> storages = main.storages;
+		HashMap<Player, Storage> storages = Main.storages;
 		
 		// Puts the new or edited storage in the storage map
 		storages.put(player, storage);
 		
 		// Sets the storage map to the edited one
-		main.storages = storages;
+		Main.storages = storages;
 	}
 
 }

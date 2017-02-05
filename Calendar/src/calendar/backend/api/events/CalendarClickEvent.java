@@ -1,6 +1,5 @@
 package calendar.backend.api.events;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.bukkit.Bukkit;
@@ -12,11 +11,9 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.inventory.ItemStack;
 
-import calendar.backend.date.Date;
+import calendar.backend.dateTime.DateTime;
 import calendar.backend.item.Items;
-import calendar.frontend.gui.Calendar;
-import net.minecraft.server.v1_10_R1.Block;
-import net.minecraft.server.v1_10_R1.ItemBucket;
+import calendar.frontend.gui.calendar.Calendar;
 
 public class CalendarClickEvent extends Event implements Cancellable {
 	
@@ -67,7 +64,7 @@ public class CalendarClickEvent extends Event implements Cancellable {
 	 * Method to call the DayClickEvent if the item is a day item.
 	 */
 	private void callDayClickEvent(Player player, Calendar calendar, ItemStack item) {
-		HashMap<ItemStack, Date> dayItems = (HashMap<ItemStack, Date>) calendar.getItems().get(Items.DAY);
+		HashMap<ItemStack, DateTime> dayItems = (HashMap<ItemStack, DateTime>) calendar.getItems().get(Items.DAY);
 		
 			if(dayItems.containsKey(item)) {
 				Bukkit.getPluginManager().callEvent(new DayClickEvent(item, player, calendar));
@@ -78,7 +75,7 @@ public class CalendarClickEvent extends Event implements Cancellable {
 	 * Method to call the WeekClickEvent if the item is a week item.
 	 */
 	private void callWeekClickEvent(Player player, Calendar calendar, ItemStack item) {
-		HashMap<ItemStack, Date> weekItems = (HashMap<ItemStack, Date>) calendar.getItems().get(Items.WEEK);
+		HashMap<ItemStack, DateTime> weekItems = (HashMap<ItemStack, DateTime>) calendar.getItems().get(Items.WEEK);
 		
 			if(weekItems.containsKey(item)) {
 				Bukkit.getPluginManager().callEvent(new WeekClickEvent(item, player, calendar));

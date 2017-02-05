@@ -7,13 +7,11 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import calendar.backend.date.DateUtils;
-import calendar.backend.main.main;
-
 public class ItemCreator {
 	
 	ItemStack item;
 	
+	@SuppressWarnings("unchecked")
 	public ItemCreator(HashMap<ItemProperties, Object> itemProperties) {
 		
 		String name = (String) itemProperties.get(ItemProperties.NAME);

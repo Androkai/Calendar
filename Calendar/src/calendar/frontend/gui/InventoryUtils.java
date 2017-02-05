@@ -1,40 +1,53 @@
 package calendar.frontend.gui;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import calendar.backend.Main;
 import calendar.backend.appointments.Appointment;
-import calendar.backend.appointments.Flags;
-import calendar.backend.date.Date;
-import calendar.backend.date.DateUtils;
+import calendar.backend.configs.CalendarConfig;
+import calendar.backend.dateTime.DateTime;
+import calendar.backend.dateTime.DateTimeUtils;
 import calendar.backend.item.EnchantmentProperties;
 import calendar.backend.item.ItemCreator;
 import calendar.backend.item.ItemProperties;
-import calendar.backend.main.main;
-import calendar.frontend.configs.CalendarConfig;
-import net.minecraft.server.v1_10_R1.Enchantments;
+import calendar.backend.item.Items;
+import calendar.frontend.messages.MessageUtils;
 
-public class InventoryUtils {
+public class InventoryUtils extends MessageUtils {
 	
-	CalendarConfig calendarConfig = main.getCalendarConfig();
-	DateUtils dateUtils = main.getDateUtils();
+	CalendarConfig calendarConfig = Main.getCalendarConfig();
+	DateTimeUtils dateTimeUtils = Main.getDateTimeUtils();
 	
-	public ItemStack createItem(HashMap<ItemProperties, Object> itemProperties, Date date, Appointment appointment) {
+	DateTime dateTime;
+	Appointment appointment;
+	HashMap<Items, Object> items;
+	
+	public InventoryUtils(DateTime dateTime, Appointment appointment, HashMap<Items, Object> items) {
+		
+		this.dateTime = dateTime;
+		this.appointment = appointment;
+		this.items    = items;
+	}
+	
+	public void setItem(Items itemName, Inventory inventory, HashMap<Items, HashMap<ItemProperties, Object>> properties) {
+		
+		HashMap<ItemProperties, Object> itemProperties = properties.get(itemName);
+		ItemStack item = createItem(itemProperties, dateTime, appointment);
+		items.put(itemName, item);
+		inventory.setItem((int) itemProperties.get(ItemProperties.SLOT), item);
+		
+	}
+	
+	public ItemStack createItem(HashMap<ItemProperties, Object> itemProperties, DateTime date, Appointment appointment) {
 		itemProperties = new HashMap<>(itemProperties);
 		ItemStack item = null;
 		
@@ -81,77 +94,6 @@ public class InventoryUtils {
 			}
 		
 		return item;
-	}
-	
-	/*
-	 * Method to replace placeholder.
-	 */
-	public String replacePlaceholder(String message, Date date, Appointment appointment) {
-		date = new Date(date);
-		message = new String(message);
-		
-			if(date != null) {
-				message = replaceDatePlaceholder(message, date);
-			}
-			
-			if(appointment != null) {
-				message = replaceAppointmentPlaceholder(message, appointment);
-			}
-		
-		return message;
-	}
-	
-	public String replaceDatePlaceholder(String message, Date date){
-		date = new Date(date);
-		LocalDateTime timeSystem = dateUtils.toLocalDateTime(date);
-		message = new String(message);
-		
-		DateTimeFormatter formatter = new DateTimeFormatterBuilder().toFormatter(calendarConfig.getLocal());
-		// Replaces Date unit placeholder
-		message = message
-				.replaceAll("%date_second%", timeSystem.format(formatter.ofPattern("ss")))
-				.replaceAll("%date_minute%", timeSystem.format(formatter.ofPattern("mm")))
-				.replaceAll("%date_hour%", timeSystem.format(formatter.ofPattern("hh")))
-				.replaceAll("%date_day%", timeSystem.format(formatter.ofPattern("dd")))
-				.replaceAll("%date_week%", String.valueOf(date.getWeek()))
-				.replaceAll("%date_month%", timeSystem.format(formatter.ofPattern("MM")))
-				.replaceAll("%date_year%", timeSystem.format(formatter.ofPattern("yyyy")))
-				.replaceAll("%date_day_name%", timeSystem.getDayOfWeek().getDisplayName(TextStyle.FULL, calendarConfig.getLocal()))
-				.replaceAll("%date_month_name%", timeSystem.getMonth().getDisplayName(TextStyle.FULL, calendarConfig.getLocal()));
-		
-		return message;
-	}
-	
-	public String replaceAppointmentPlaceholder(String message, Appointment appointment) {
-		
-			message = message
-					.replaceAll("%appointment_name%", appointment.getName());
-			
-			message = message
-					.replaceAll("%appointment_header%", appointment.getHeader());
-		
-			HashMap<Flags, Boolean> flags = appointment.getFlags();
-			
-			message = message
-					.replaceAll("%appointment_edited%", String.valueOf(flags.get(Flags.EDITED)))
-					.replaceAll("%appointment_deleted%", String.valueOf(flags.get(Flags.DELETED)));
-			
-			Date date = appointment.getDate();
-			LocalDateTime timeSystem = dateUtils.toLocalDateTime(date);
-			
-			DateTimeFormatter formatter = new DateTimeFormatterBuilder().toFormatter(calendarConfig.getLocal());
-			message = message
-					.replaceAll("%appointment_date_second%", timeSystem.format(formatter.ofPattern("ss")))
-					.replaceAll("%appointment_date_minute%", timeSystem.format(formatter.ofPattern("mm")))
-					.replaceAll("%appointment_date_hour%", timeSystem.format(formatter.ofPattern("hh")))
-					.replaceAll("%appointment_date_day%", timeSystem.format(formatter.ofPattern("dd")))
-					.replaceAll("%appointment_date_week%", String.valueOf(date.getWeek()))
-					.replaceAll("%appointment_date_month%", timeSystem.format(formatter.ofPattern("MM")))
-					.replaceAll("%appointment_date_year%", timeSystem.format(formatter.ofPattern("yyyy")))
-					.replaceAll("%appointment_date_day_name%", DayOfWeek.of(timeSystem.getDayOfWeek().getValue()).getDisplayName(TextStyle.FULL, calendarConfig.getLocal()))
-					.replaceAll("%appointment_date_month_name%", Month.of((int) date.getMonth()).getDisplayName(TextStyle.FULL, calendarConfig.getLocal()));
-			
-		return message;
 	}
 	
 

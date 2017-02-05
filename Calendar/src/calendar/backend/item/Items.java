@@ -6,19 +6,23 @@ public enum Items {
 	DAY,
 	WEEK,
 	APPOINTMENT,
-	
+
 	nextMonth,
 	previousMonth,
+	EXIT,
+	
+	BACK,
+	CONFIRM,
 	
 	publicAppointments,
 	privateAppointments,
-	backToCalendar,
+	addAppointment,
+	restoreAppointment,
 	
 	setStatus,
+	setTime,
 	setName,
 	setHeader,
 	setDescription,
-	
-	CONFIRM,
 
 }
