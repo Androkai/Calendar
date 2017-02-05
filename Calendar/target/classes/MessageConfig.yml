@@ -7,6 +7,7 @@
 # If the programm dosen't find a meta it will use the default values. Theese are the meta informations you can change:
 #    - Output [Chat/Actionbar(1.9+)/Title(1.9+)] default:Chat
 #    - Prefix [true/false]                       default:true
+#    - CustomPrefix [String]                     default:null
 # Exampel: {Output:Actionbar;Prefix:false}Hello World!
 #
 prefix: '[&6&lCalendar&r] '

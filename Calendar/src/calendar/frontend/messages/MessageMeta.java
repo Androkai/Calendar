@@ -1,12 +1,12 @@
 package calendar.frontend.messages;
 
-import calendar.backend.dateTime.Time;
 import calendar.frontend.messages.MessageHandler.OutputType;
 
 public class MessageMeta {
-	boolean withPrefix;
 	
-	OutputType output;
+	private boolean withPrefix;
+	
+	private OutputType output;
 	
 	public MessageMeta(boolean withPrefix, OutputType output) {
 		setOutputType(output);

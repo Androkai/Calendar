@@ -9,6 +9,9 @@ import org.bukkit.entity.Player;
 
 import calendar.backend.Main;
 import calendar.backend.configs.MessageConfig;
+import calendar.frontend.messages.output.Actionbar;
+import calendar.frontend.messages.output.Chat;
+import calendar.frontend.messages.output.Title;
 public class MessageHandler {
 	
 	MessageConfig config = Main.getMessageConfig();
@@ -57,7 +60,7 @@ public class MessageHandler {
 	
 	// Method to send a Chat message.
 	private void sendChat(String message) {
-		player.sendMessage(message);
+		new Chat(player, message);
 	}
 	
 	// Method to send an Actionbar with the default parameters.

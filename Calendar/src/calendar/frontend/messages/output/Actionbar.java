@@ -1,4 +1,4 @@
-package calendar.frontend.messages;
+package calendar.frontend.messages.output;
 
 import org.bukkit.entity.Player;
 
@@ -57,22 +57,6 @@ public class Actionbar extends ReflectionUtils{
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-	}
-	
-	private Object toChatComponent(String text) {
-		try {
-			final Class<?> IChatBaseComponent = getVersionClass("IChatBaseComponent", VersionType.MINECRAFT);
-			final Class<?> ChatSerializer = IChatBaseComponent.getClasses()[0];
-			
-				Object component = ChatSerializer.getMethod("a", String.class).invoke(ChatSerializer, "{\"text\":\"" + text + "\"}");
-			
-			return component;
-			
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		
-		return null;
 	}
 	
 }

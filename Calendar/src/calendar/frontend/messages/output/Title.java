@@ -1,8 +1,8 @@
-package calendar.frontend.messages;
+package calendar.frontend.messages.output;
 
 import org.bukkit.entity.Player;
 
-import calendar.frontend.messages.ReflectionUtils.VersionType;
+import calendar.frontend.messages.output.ReflectionUtils.VersionType;
 
 public class Title extends ReflectionUtils {
 	
@@ -65,22 +65,6 @@ public class Title extends ReflectionUtils {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-	}
-	
-	private Object toChatComponent(String text) {
-		try {
-			final Class<?> IChatBaseComponent = getVersionClass("IChatBaseComponent", VersionType.MINECRAFT);
-			final Class<?> ChatSerializer = IChatBaseComponent.getClasses()[0];
-			
-				Object component = ChatSerializer.getMethod("a", String.class).invoke(ChatSerializer, "{\"text\":\"" + text + "\"}");
-			
-			return component;
-			
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		
-		return null;
 	}
 
 }

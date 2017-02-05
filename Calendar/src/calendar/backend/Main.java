@@ -20,8 +20,8 @@ import calendar.backend.storage.StorageUtils;
 import calendar.frontend.listener.chat.ChatEventCaller;
 import calendar.frontend.listener.command.CommandEventCaller;
 import calendar.frontend.listener.inventory.InventoryEventCaller;
-import calendar.frontend.messages.ReflectionUtils;
-import calendar.frontend.messages.ReflectionUtils.VersionType;
+import calendar.frontend.messages.output.ReflectionUtils;
+import calendar.frontend.messages.output.ReflectionUtils.VersionType;
 import calendar.frontend.notifications.Reminder;
 
 public class Main extends JavaPlugin {

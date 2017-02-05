@@ -57,6 +57,7 @@ public class Message {
 										meta.setWithPrefix(withPrefix);
 								}
 								
+								
 							}
 						}
 		}
@@ -66,6 +67,6 @@ public class Message {
 	
 	@Override
 	public String toString() {
-		return meta.isWithPrefix()? prefix + message : message;
+			return meta.isWithPrefix()? prefix + message : message;
 	}
 }

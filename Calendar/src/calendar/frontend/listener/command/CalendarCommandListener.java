@@ -19,6 +19,9 @@ import calendar.frontend.messages.MessageHandler;
 import calendar.frontend.messages.MessageHandler.Error;
 import calendar.frontend.messages.MessageHandler.Notification;
 import calendar.frontend.messages.MessageHandler.OutputType;
+import calendar.frontend.messages.output.Chat;
+import calendar.frontend.messages.output.Chat.ClickAction;
+import calendar.frontend.messages.output.Chat.HoverAction;
 public class CalendarCommandListener extends CommandListener {
 
 	CalendarConfig calendarConfig = Main.getCalendarConfig();
