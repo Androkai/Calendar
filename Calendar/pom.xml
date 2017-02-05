@@ -4,15 +4,6 @@
   <artifactId>Calendar</artifactId>
   <version>1.0.0-RELEASE</version>
   
-  <profiles>
-    <profile>
-        <id>dir</id>
-        <build>
-            <directory>C:\Users\Joshua\Desktop\Server\plugins</directory>
-        </build>
-    </profile>
-  </profiles>
-  
   <build>
     <sourceDirectory>src</sourceDirectory>
     <finalName>Calendar</finalName>

@@ -34,7 +34,6 @@ public class Reminder extends MessageUtils {
 	AppointmentConfig appoinmentConfig = Main.getAppointmentConfig();
 	AppointmentDataConfig appointments = Main.getAppointmentDataConfig();
 	
-	
 	BukkitTask task = null;
 	
 	public Reminder() {
