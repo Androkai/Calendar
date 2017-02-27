@@ -39,6 +39,8 @@ public class AppointmentCommandListener extends CommandListener {
 							
 								case "reminder":
 									Reminder reminder = Main.getReminder();
+									
+									if(player.hasPermission("Calendar.appointment.reminder")) {
 										switch(String.valueOf(reminder.isRunning())) {
 											case "false":
 													reminder.enable();
@@ -50,6 +52,7 @@ public class AppointmentCommandListener extends CommandListener {
 													handler.sendNotification(Notification.REMINDERDISABLE);
 											break;
 										}
+									}
 									break; 
 								
 								default:

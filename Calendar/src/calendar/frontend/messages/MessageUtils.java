@@ -90,6 +90,7 @@ public class MessageUtils {
 		return message;
 	}
 	
+	@SuppressWarnings("static-access")
 	public String replaceAppointmentPlaceholder(String message, Appointment appointment) {
 			
 				if(appointment.getCreator() == Main.sUUID) {

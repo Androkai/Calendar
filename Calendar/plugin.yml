@@ -41,9 +41,4 @@ permissions:
     description: Gives access to all Calendar restore appointment commands.
     children:
       calendar.appointment.restore.private: true
-      calendar.appointment.restore.public: true 
-  calendar.appointment.reminder:
-    description: Gives access to all Calendar reminder commands.
-    children:
-      calendar.appointment.reminder.enable: true
-      calendar.appointment.reminder.disable: true
+      calendar.appointment.restore.public: true

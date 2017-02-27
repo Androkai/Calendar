@@ -64,37 +64,37 @@ public class Date {
 	
 	public boolean isBefore(Date date) {
 		
-		if(year <= date.getYear())
-		if(month <= date.getMonth())
-		if(day < date.getDay())
-			return true;
+		if(year <= date.getYear() 
+			|| month <= date.getMonth() 
+			|| day < date.getDay())
+				return true;
 		
 		return false;
 	}
 	public boolean isAt(Date date) {
 		
-		if(year == date.getYear())
-		if(month == date.getMonth())
-		if(day == date.getDay())
-			return true;
+		if(year == date.getYear() 
+			&& month == date.getMonth()
+			&& day == date.getDay())
+				return true;
 		
 		return false;
 	}
 	public boolean isAfter(Date date) {
 		
-		if(year >= date.getYear())
-		if(month >= date.getMonth())
-		if(day > date.getDay())
-			return true;
+		if(year >= date.getYear()
+			|| month >= date.getMonth()
+			|| day > date.getDay())
+				return true;
 		
 		return false;
 	}
 	
 	public Boolean isPending() {
-		return isAfter(new Date(LocalDate.now()));
+		return isBefore(new Date(LocalDate.now()));
 	}
 	public Boolean isOver() {
-		return isBefore(new Date(LocalDate.now()));
+		return isAfter(new Date(LocalDate.now()));
 	}
 	public boolean isNow(){
 		return isAt(new Date(LocalDate.now()));

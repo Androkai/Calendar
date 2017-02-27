@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 public class Chat extends ReflectionUtils {
 	
 	public enum HoverAction{SHOW_TEXT(0);		
-			private int value = -1;
+			private final int value;
 			HoverAction(int value) {
 				this.value = value;
 			}
@@ -14,7 +14,7 @@ public class Chat extends ReflectionUtils {
 			public int getValue() { return value; }};
 			
 	public enum ClickAction{OPEN_URL(0), OPEN_FILE(1), RUN_COMMAND(2), SUGGEST_COMMAND(3);		
-				private int value = -1;
+				private final int value;
 				private ClickAction(int value) {
 					this.value = value;
 				}
@@ -43,7 +43,7 @@ public class Chat extends ReflectionUtils {
 	}
 	
 	public Chat(Player player, String message) {
-		this(player, message, HoverAction.SHOW_TEXT, "", ClickAction.RUN_COMMAND, "");
+		this(player, message, null, null, null, null);
 	}
 	
 	public void send() {
@@ -58,13 +58,18 @@ public class Chat extends ReflectionUtils {
 			
 				Object comp = toChatComponent(message);
 					Object chatModifier = ChatModifier.getConstructor().newInstance();
-						Object chatHoverable = ChatHoverable.getConstructor(EnumHoverAction, IChatBaseComponent).newInstance(EnumHoverAction.getEnumConstants()[hoverAction.getValue()], toChatComponent(hoverText));
-						ChatModifier.getMethod("setChatHoverable", ChatHoverable).invoke(chatModifier, chatHoverable);
 						
-						Object chatClickable = ChatClickable.getConstructor(EnumClickAction, String.class).newInstance(EnumClickAction.getEnumConstants()[clickAction.getValue()], clickText);
-						ChatModifier.getMethod("setChatClickable", ChatClickable).invoke(chatModifier, chatClickable);
+						if(hoverAction != null) {
+							Object chatHoverable = ChatHoverable.getConstructor(EnumHoverAction, IChatBaseComponent).newInstance(EnumHoverAction.getEnumConstants()[hoverAction.getValue()], toChatComponent(hoverText));
+							ChatModifier.getMethod("setChatHoverable", ChatHoverable).invoke(chatModifier, chatHoverable);
+						}
 						
-				IChatBaseComponent.getMethod("setChatModifier", ChatModifier).invoke(comp, chatModifier);
+						if(clickAction != null) {
+							Object chatClickable = ChatClickable.getConstructor(EnumClickAction, String.class).newInstance(EnumClickAction.getEnumConstants()[clickAction.getValue()], clickText);
+							ChatModifier.getMethod("setChatClickable", ChatClickable).invoke(chatModifier, chatClickable);
+						}
+						
+					IChatBaseComponent.getMethod("setChatModifier", ChatModifier).invoke(comp, chatModifier);
 				
 					Object packet = PacketPlayOutChat.getConstructor(IChatBaseComponent, byte.class).newInstance(comp, (byte) 0);
 					sendPacket(player, packet);
