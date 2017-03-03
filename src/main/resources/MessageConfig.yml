@@ -1,0 +1,34 @@
+#       Calendar
+#  Author: Joshua Wirtz
+# 
+# Formatting codes can be used with &[FormattingCode], for a list with all formatting codes visit: http://minecraft.gamepedia.com/Formatting_codes
+# 
+# You can set serveral meta-information for the chat messages inside curly brackets. Split them with a semicolon. Don't use any Spaces!.
+# If the programm doesn't find a meta-value it will use the default ones. These are the meta-information you can change:
+#    - Output [Chat/Actionbar(1.9+)/Title(1.9+)] default:Chat
+#    - Prefix [true/false]                       default:true
+#    - CustomPrefix [String]                     default:null
+# Example: {Output:Actionbar;Prefix:false}Hello World!
+#
+prefix: '[&6&lCalendar&r] '
+help:
+  - '<->  &6&lCalendar&r &2&lHELP&r  <->'
+  - '&r- &o/calendar            '
+  - '&r     &aOpens the calendar'
+  - '&r- &o/appointment         '
+  - '&r     -reminder           '
+  - '&r       &aDisables or enables the reminder'
+requests:
+    time: '{Output:Actionbar;Prefix:false}&7Write the time with the format HH:MM:SS into the chat'
+    name: '{Output:Actionbar;Prefix:false}&7Write the name into the chat'
+    header: '{Output:Actionbar;Prefix:false}&7Write the header into the chat'
+    description: '{Output:Actionbar;Prefix:false&7Write the description into the chat. (Next line: %n)}'
+errors:
+  unknownCommand: '&cUnknown command! Try &r/calendar help'
+  notPlayer: '&cThis command is not executable in the console!'
+  noPermissions: '&cYou do not have permission to do that!'
+notifications:
+  configsReloaded: '&aConfigs have been reloaded!'
+  reminderEnabled: '&aReminder enabled!'
+  reminderDisabled: '&aReminder disabled!'
+  
