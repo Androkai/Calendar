@@ -1,6 +1,8 @@
 
 # Calendar
-Calendar let your players know then the next event starts.
+Calendar is a Minecraft 1.8 Craftbukkit/Spigot/Paper plugin which let your players know then the next event starts.
+
+This is a fork from [relatev](https://github.com/relatev) which only purpose was to mavenize the projekt but since the original one no longer exist this is now the last public copy. Feel free to fork and revive the projekt.
 
 **Features**  
 * Realtime calendar (Depending on the system timezone)  
